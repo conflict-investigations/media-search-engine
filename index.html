@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title></title>
+</head>
+<style>
+#results { margin-top: 1em; }
+.result { border: 2px solid #d1e6e6; max-width: 600px;
+          border-radius: 10px; padding: 5px 10px; }
+</style>
+<body>
+<h1>Database search</h1>
+ <form id='query' onSubmit='return submitData()'>
+  <label for='url'>Check URL:</label><br>
+  <input type='text' id='url' name='url'>
+  <input type='submit' value='Check'>
+</form>
+<div id="results"></div>
+
+<script>
+const results_area = document.getElementById('results');
+const create = ((elm) => document.createElement(elm));
+const insertResults = (results) => {
+  // Clear any previous results
+  results_area.textContent = '';
+  for (const result of results) {
+    let container = create('div');
+    container.classList.add('result');
+    let header = create('span');
+    header.innerHTML =
+      `Found entry in database of <b>${result.source}</b>, `
+      + `Identifier = <b>${result.id}</b>`;
+    container.appendChild(header);
+    let content = create('div');
+    // Replace newlines with HTML linebreak tags
+    let desc = result.desc.replace(/\n/g, '<br>');
+    content.innerHTML = desc;
+    container.appendChild(content);
+    results_area.appendChild(container);
+  }
+}
+const insertFailure = () => {
+  results_area.textContent = 'URL not found in database';
+}
+const submitData = (event) => {
+  event.preventDefault();
+  const url = document.getElementById('url').value;
+  const requestOptions = {
+    method: 'POST', headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({'url': url}),
+  };
+  fetch('/api/v1/query', requestOptions)
+    .then((resp) => resp.json())
+    .then((response) => {
+      if (response.success) {
+        insertResults(response.dataset);
+      } else {
+        insertFailure();
+      }
+    })
+    .catch((error) => console.log(error));
+}
+document.getElementById('query').onsubmit = submitData;
+</script>
+
+</body>
+</html>

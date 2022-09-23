@@ -36,6 +36,7 @@ FOLDER = os.path.join(os.getcwd(), 'data')
 DUMP_FILE = 'dump.pickle'
 
 link_extract_regex = r"(https?://.+?)[ ,\n]"
+entry_extract_regex = r"ENTRY: (\w+)[\n]?"
 
 def get_file(sourcename):
     return os.path.join(FOLDER, DATA_FILES[sourcename])
@@ -72,14 +73,20 @@ def process_ceninfores(data):
         # We may get the same URL multiple times for a single item (e.g. once
         # as `GEOLOCATION` and once as `LINK`). But that's not too worrisome
         # since we link the whole item anyway
+        if not props.get('description'):
+            props['description'] = ''
         matches = re.findall(link_extract_regex,
-            props.get('description') or '')
+                             props['description'])
         if matches:
             found.extend(matches)
+        entryid = None
+        if (candidate := re.findall(entry_extract_regex,
+                                    props['description'])):
+            entryid = candidate[0]
         for url in found:
             processed[url] = dict(
                 source='CEN4INFORES',
-                id=props.get('id'),
+                id=entryid,
                 desc=props.get('description'),
             )
     return processed
