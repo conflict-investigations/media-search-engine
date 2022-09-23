@@ -44,6 +44,14 @@ $ python api.py
 The API part requires you to do a dump of the pre-formatted database beforehand.
 Run `python check.py --dump` before you start the API server.
 
+By default, the server will run on `http://localhost:8000/`. It is not
+recommended to run a `flask` development server in production.
+
+Use e.g. [gunicorn](https://flask.palletsprojects.com/en/2.2.x/deploying/gunicorn/):
+```sh
+$ gunicorn -w 2 'api:app'
+```
+
 **Available routes**
 
 - `/`: Web UI
