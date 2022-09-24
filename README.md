@@ -5,22 +5,36 @@ Belllingcat's, Cen4InfoRes).
 
 Has both a **simple web UI** as well as an **API** and a **command-line client**.
 
+### Installation
+
+Requires Python, `pip` and the `flask` package (the CLI can be used without
+`flask`).
+
+```console
+virtualenv .venv
+.venv/bin/activate
+pip install -e .
+```
+
 ### Usage
 
 **Command line**
-```sh
+```console
+# Before first run: Download necessary files
+media_search -o
+
 # Print all URLs in all databases
-python check.py -p
+media_search -p
 # Print URLs as JSON
-python check.py -j
+media_search -j
 # Seach for a specific URL
-python check.py <url>
+media_search <url>
 
 # Dump data into pre-formatted database so the web API can use it.
-python check.py -d
+media_search -d
 # Load data from pre-formatted database on disk instead of loading the huge
 # database files themselves
-python check.py -l
+media_search -l
 ```
 
 ### Obtaining data
@@ -30,26 +44,27 @@ There's an "Export to JSON" button.
 
 The `Cen4InfoRes` database is from the Center for Information Resilience's
 [Eyes on Russia map](https://maphub.net/Cen4infoRes/russian-ukraine-monitor).
-While we do not want to disclose the link here, you'll have no issue watching
-the network tab of your browser and looking for a large JSON file.
+
+The `media_search -o` command will download the data on your behalf and put it
+into a `data/` folder.
 
 ### API & Web UI
 There's a simple `flask` application with a plain HTML+JS frontend.
 
-Install flask via `pip install flask` and run the server:
-```sh
-$ python api.py
-```
-
 The API part requires you to do a dump of the pre-formatted database beforehand.
-Run `python check.py --dump` before you start the API server.
+Run `media_search --dump` before you start the API server.
+
+Run the server:
+```console
+$ flask --app 'media_search.web' run --port 8000
+```
 
 By default, the server will run on `http://localhost:8000/`. It is not
 recommended to run a `flask` development server in production.
 
 Use e.g. [gunicorn](https://flask.palletsprojects.com/en/2.2.x/deploying/gunicorn/):
-```sh
-$ gunicorn -w 2 'api:app'
+```console
+$ gunicorn -w 2 media_search.web:app'
 ```
 
 **Available routes**
@@ -80,8 +95,8 @@ $ gunicorn -w 2 'api:app'
 
 
 ### Example
-```sh
-$ python check.py 'https://twitter.com/RedIntelPanda/status/1488569554028707847'
+```console
+$ media_search 'https://twitter.com/RedIntelPanda/status/1488569554028707847'
 
 Found URL https://twitter.com/RedIntelPanda/status/1488569554028707847 in 'CEN4INFORES' dataset
 Id: UW0067

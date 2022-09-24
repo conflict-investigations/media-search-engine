@@ -1,0 +1,5 @@
+graft media_search/frontend/static/
+graft media_search/frontend/templates/
+
+global-exclude *.pyc
+global-exclude node_modules

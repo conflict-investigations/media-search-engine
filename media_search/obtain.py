@@ -16,7 +16,7 @@ link_extract_regex = r"(https?://.+?)[ ,\n]"
 entry_extract_regex = r"ENTRY: (\w+)[\n]?"
 
 def get_file(sourcename):
-    return os.path.join(CONFIG.FOLDER, DATA_FILES[sourcename])
+    return os.path.join(CONFIG.DATA_FOLDER, DATA_FILES[sourcename])
 
 def load_files():
     data = {}
@@ -71,14 +71,14 @@ def process_ceninfores(data):
 def download_data():
     ensure_data_dir()
     print('  downloading Bellingcat...')
-    BellingcatSource(datapath=CONFIG.FOLDER).get_data()
+    BellingcatSource(datapath=CONFIG.DATA_FOLDER).get_data()
     print('  downloading Cen4infoRes...')
-    CenInfoResSource(datapath=CONFIG.FOLDER).get_data()
+    CenInfoResSource(datapath=CONFIG.DATA_FOLDER).get_data()
     print('  Download finished')
 
 def ensure_data_dir():
-    if not os.path.isdir(CONFIG.FOLDER):
-        os.mkdir(CONFIG.FOLDER)
+    if not os.path.isdir(CONFIG.DATA_FOLDER):
+        os.mkdir(CONFIG.DATA_FOLDER)
 
 def load_and_generate_mapping():
     try:

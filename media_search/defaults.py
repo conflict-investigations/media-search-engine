@@ -3,11 +3,13 @@ from dataclasses import dataclass
 
 @dataclass
 class Config():
-    FOLDER: os.PathLike
+    DATA_FOLDER: os.PathLike
+    DUMP_FOLDER: os.PathLike
     DUMP_FILE: str
 
 
 CONFIG = Config(
-    FOLDER=os.path.join(os.getcwd(), 'data'),
-    DUMP_FILE='dump.pickle'
+    DATA_FOLDER=os.path.join(os.getcwd(), 'data'),
+    DUMP_FOLDER=os.path.join(os.getcwd(), 'dump'),
+    DUMP_FILE=os.path.join(os.getcwd(), 'data/' 'dump.pickle')
 )

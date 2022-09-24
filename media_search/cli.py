@@ -1,5 +1,6 @@
 import argparse
 import json
+import os
 import pickle
 import sys
 
@@ -37,6 +38,10 @@ def main():
     def dump():
         with open(CONFIG.DUMP_FILE, 'wb') as f:
             pickle.dump(processed, f)
+
+    def ensure_dump_dir():
+        if not os.path.isdir(CONFIG.DUMP_FOLDER):
+            os.mkdir(CONFIG.DUMP_FOLDER)
 
     if args.obtain:
         obtain.download_data()
