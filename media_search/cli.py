@@ -34,8 +34,13 @@ def main():
 
     processed = {}
 
+    def dump():
+        with open(CONFIG.DUMP_FILE, 'wb') as f:
+            pickle.dump(processed, f)
+
     if args.obtain:
         obtain.download_data()
+        dump()
         sys.exit(0)
     if args.load:
         with open(CONFIG.DUMP_FILE, 'rb') as f:
@@ -43,8 +48,7 @@ def main():
     else:
         processed = obtain.load_and_generate_mapping()
     if args.dump:
-        with open(CONFIG.DUMP_FILE, 'wb') as f:
-            pickle.dump(processed, f)
+        dump()
         sys.exit(0)
 
     if args.print:
