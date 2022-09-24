@@ -1,1 +1,4 @@
 dump.pickle
+media_search.egg-info/
+*.pyc
+__pycache__
