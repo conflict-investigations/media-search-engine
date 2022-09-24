@@ -69,11 +69,16 @@ def process_ceninfores(data):
     return processed
 
 def download_data():
+    ensure_data_dir()
     print('  downloading Bellingcat...')
     BellingcatSource(datapath=CONFIG.FOLDER).get_data()
     print('  downloading Cen4infoRes...')
     CenInfoResSource(datapath=CONFIG.FOLDER).get_data()
     print('  Download finished')
+
+def ensure_data_dir():
+    if not os.path.isdir(CONFIG.FOLDER):
+        os.mkdir(CONFIG.FOLDER)
 
 def load_and_generate_mapping():
     try:
