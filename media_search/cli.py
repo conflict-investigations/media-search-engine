@@ -45,6 +45,7 @@ def main():
 
     if args.obtain:
         obtain.download_data()
+        processed = obtain.load_and_generate_mapping()
         dump()
         sys.exit(0)
     if args.load:

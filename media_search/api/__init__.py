@@ -5,12 +5,12 @@ from flask import (
     request
 )
 
-DUMP_FILE = 'dump.pickle'
+from ..defaults import CONFIG
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
 processed = {}
-with open(DUMP_FILE, 'rb') as f:
+with open(CONFIG.DUMP_FILE, 'rb') as f:
     processed = pickle.load(f)
 
 # Pre-cache jsonify operation

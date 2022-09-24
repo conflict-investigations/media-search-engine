@@ -11,5 +11,5 @@ class Config():
 CONFIG = Config(
     DATA_FOLDER=os.path.join(os.getcwd(), 'data'),
     DUMP_FOLDER=os.path.join(os.getcwd(), 'dump'),
-    DUMP_FILE=os.path.join(os.getcwd(), 'data/' 'dump.pickle')
+    DUMP_FILE=os.path.join(os.getcwd(), 'dump/' 'dump.pickle')
 )
