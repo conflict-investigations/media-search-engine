@@ -1,6 +1,8 @@
 import json
 import os
 
+from ..defaults import CONFIG
+
 class DataSource():
     def __init__(self, datapath=None):
         # To be used later for determining storage locations
@@ -15,6 +17,8 @@ class DataSource():
         return data
 
     def dump_data(self, data):
+        if not os.path.isdir(CONFIG.DUMP_FOLDER):
+            os.mkdir(CONFIG.DUMP_FOLDER)
         with open(os.path.join(self.datapath, self.filename), 'w') as f:
             json.dump(data, f)
 

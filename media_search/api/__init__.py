@@ -6,6 +6,8 @@ from flask import (
 )
 
 from ..defaults import CONFIG
+from ..processors import BadFormatError, CSVFileProcessor, FileProcessor
+from ..utils import normalize_and_sanitize
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
 
@@ -13,14 +15,9 @@ processed = {}
 with open(CONFIG.DUMP_FILE, 'rb') as f:
     processed = pickle.load(f)
 
-# Pre-cache jsonify operation
-# jsonified = None
-# with current_app.app_context():
-#     jsonified = jsonify(processed)
-
 @api.route('/export', methods=['GET'])
 def export():
-    # return jsonified
+    # TODO: Cache this
     return jsonify(processed)
 
 @api.route('/query', methods=['GET', 'POST'])
@@ -28,8 +25,27 @@ def query():
     url = request.args.get('url')
     if not url:
         # Be lenient and also parse JSON body
-        url = request.get_json().get('url')
-    if url not in processed:
+        if (req_json := request.get_json(silent=True)):
+            url = req_json.get('url')
+    urls = [url]
+    if not url:
+        # If there's no JSON, then it's probably a CSV file
+        file = request.files.get('file')
+        if not file:
+            return 'No query supplied', 400
+        try:
+            urls = CSVFileProcessor(file).get_links()
+        except BadFormatError:
+            urls = FileProcessor(file).get_links()
+    urls = list(map(normalize_and_sanitize, urls))
+    results = {}
+    for u in filter(lambda x: x in processed, urls):
+        for p in processed[u]:
+            if not results.get(u):
+                results[u] = [p]
+                continue
+            results[u].append(p)
+    if not results:
         return jsonify(dict(
             message='Failure. Url not found in database',
             success=False,
@@ -37,6 +53,6 @@ def query():
     resp = dict(
         message='Success! Url found in database',
         success=True,
-        dataset=processed[url]
+        dataset=results
     )
     return jsonify(resp)

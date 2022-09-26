@@ -4,6 +4,7 @@ import re
 
 from .defaults import CONFIG
 from .accessors import BellingcatSource, CenInfoResSource
+from .utils import normalize_and_sanitize
 
 DATA_FILES = dict(
   BELLINGCAT='bellingcat.json',
@@ -29,7 +30,11 @@ def process_bellingcat(data):
     processed = {}
     for item in data['BELLINGCAT']:
         for source in item.get('sources'):
-            processed[source.get('path')] = dict(
+            if not source.get('path'):
+                continue  # Skip items without links
+            url = source['path']
+            processed[normalize_and_sanitize(url)] = dict(
+                unsanitized_url=url,
                 source='BELLINGCAT',
                 id=item.get('id'),
                 desc=item.get('description'),
@@ -45,7 +50,7 @@ def process_ceninfores(data):
         found = []
         # Not every 'type: Feature' has a 'media_url' property
         if (url := props.get('media_url')):
-            found.append(url)
+            found.append((url, normalize_and_sanitize(url)))
 
         # We may get the same URL multiple times for a single item (e.g. once
         # as `GEOLOCATION` and once as `LINK`). But that's not too worrisome
@@ -55,13 +60,15 @@ def process_ceninfores(data):
         matches = re.findall(link_extract_regex,
                              props['description'])
         if matches:
-            found.extend(matches)
+            pairs = ((u, normalize_and_sanitize(u)) for u in matches)
+            found.extend(pairs)
         entryid = None
         if (candidate := re.findall(entry_extract_regex,
                                     props['description'])):
             entryid = candidate[0]
-        for url in found:
-            processed[url] = dict(
+        for url, sanitized in found:
+            processed[sanitized] = dict(
+                unsanitized_url=url,
                 source='CEN4INFORES',
                 id=entryid,
                 desc=props.get('description'),
@@ -70,9 +77,9 @@ def process_ceninfores(data):
 
 def download_data():
     ensure_data_dir()
-    print('  downloading Bellingcat...')
+    print('  Downloading Bellingcat...')
     BellingcatSource(datapath=CONFIG.DATA_FOLDER).get_data()
-    print('  downloading Cen4infoRes...')
+    print('  Downloading Cen4infoRes...')
     CenInfoResSource(datapath=CONFIG.DATA_FOLDER).get_data()
     print('  Download finished')
 
@@ -91,7 +98,9 @@ def load_and_generate_mapping():
     bellingcat = process_bellingcat(data)
     ceninfores = process_ceninfores(data)
     for key in bellingcat.keys():
-        processed[key] = [bellingcat[key], ]
+        if not processed.get(key):
+            processed[key] = []
+        processed[key] = [bellingcat[key]]
     for key in ceninfores.keys():
         if not processed.get(key):
             processed[key] = []

@@ -5,6 +5,7 @@ from urllib import request
 from typing import List
 
 from .base import DataSource
+from ..utils import normalize_and_sanitize
 
 BELLINGCAT_BASE = 'https://ukraine.bellingcat.com/ukraine-server/api/ukraine'
 EVENTS_ENDPOINT = BELLINGCAT_BASE + '/export_events/deeprows'

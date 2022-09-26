@@ -1,3 +1,6 @@
+{%- macro script_tag(filename) %}
+<script type="module" src="{{ url_for('.static', filename='js/' + filename + '.js') }}"></script>
+{% endmacro -%}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -11,63 +14,22 @@
 </style>
 <body>
 <h1>Database search</h1>
+{#- TODO: Better copy here -#}
 <p>
 <em>Highly Work-in-Progress! Expect databases to be out of date.</em><br>
 <b>Do not rely on this yet!</b> Source available at <a href="https://github.com/conflict-investigations/media-search-engine">GitHub</a>
 </p>
  <form id='query' onSubmit='return submitData()'>
-  <label for='url'>Check URL:</label><br>
+  <label for='url'>Enter URL:</label><br>
   <input type='text' id='url' name='url'>
+  <br>
+  <label for='file'>Upload .csv file with links:</label><br>
+  <input type="file" id='file' name="file" accept=".csv">
   <!-- <textarea></textarea> -->
   <input type='submit' value='Check'>
 </form>
 <div id="results"></div>
 
-<script>
-const results_area = document.getElementById('results');
-const create = ((elm) => document.createElement(elm));
-const insertResults = (results) => {
-  // Clear any previous results
-  results_area.textContent = '';
-  for (const result of results) {
-    let container = create('div');
-    container.classList.add('result');
-    let header = create('span');
-    header.innerHTML =
-      `Found entry in database of <b>${result.source}</b>, `
-      + `Identifier = <b>${result.id}</b>`;
-    container.appendChild(header);
-    let content = create('div');
-    // Replace newlines with HTML linebreak tags
-    let desc = result.desc.replace(/\n/g, '<br>');
-    content.innerHTML = desc;
-    container.appendChild(content);
-    results_area.appendChild(container);
-  }
-}
-const insertFailure = () => {
-  results_area.textContent = 'URL not found in database';
-}
-const submitData = (event) => {
-  event.preventDefault();
-  const url = document.getElementById('url').value;
-  const requestOptions = {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({'url': url}),
-  };
-  fetch('/api/v1/query', requestOptions)
-    .then((resp) => resp.json())
-    .then((response) => {
-      if (response.success) {
-        insertResults(response.dataset);
-      } else {
-        insertFailure();
-      }
-    })
-    .catch((error) => console.log(error));
-}
-document.getElementById('query').onsubmit = submitData;
-</script>
-
+{{ script_tag('index') }}
 </body>
 </html>
