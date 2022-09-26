@@ -22,13 +22,12 @@ def export():
 
 @api.route('/query', methods=['GET', 'POST'])
 def query():
-    url = request.args.get('url')
-    if not url:
+    urls = request.args.get('urls')
+    if not urls:
         # Be lenient and also parse JSON body
         if (req_json := request.get_json(silent=True)):
-            url = req_json.get('url')
-    urls = [url]
-    if not url:
+            urls = req_json.get('urls')
+    if not urls:
         # If there's no JSON, then it's probably a CSV file
         file = request.files.get('file')
         if not file:
