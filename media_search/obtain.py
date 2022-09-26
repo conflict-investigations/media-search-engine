@@ -38,11 +38,14 @@ def process_bellingcat(data):
                 longitude=item.get('longitude'),
                 place_desc=item.get('location')
             )
+            date = ''
+            if (d := item.get('date')):
+                date = f'Date: {d}\n'
             processed[normalize_and_sanitize(url)] = dict(
                 unsanitized_url=url,
                 source='BELLINGCAT',
                 id=item.get('id'),
-                desc=item.get('description'),
+                desc=date + item.get('description'),
                 location=loc,
             )
     return processed
@@ -63,6 +66,8 @@ def process_ceninfores(data):
         # since we link the whole item anyway
         if not props.get('description'):
             props['description'] = ''
+        if props.get('title'):
+            props['description'] = props['title'] + '\n' + props['description']
         matches = re.findall(link_extract_regex,
                              props['description'])
         if matches:
