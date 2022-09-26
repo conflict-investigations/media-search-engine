@@ -5,7 +5,7 @@ from .base import BadFormatError, Processor
 
 # TODO: Does not catch everything as of now! Might be better to be a negative
 # lookup for illegal chars like "<", "(", "[" or a space
-link_extract_regex = r"(https?://[a-zA-z0-9/.?=_-]+)"
+link_extract_regex = r"(https?://[a-zA-z0-9/.?&%=_-]+)"
 
 BELLINGCAT_FIELD_NAMES = [
     'case_number',
