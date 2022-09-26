@@ -18,7 +18,11 @@ const mapToSourceLink = (src) => {
   }
 }
 const getLocation = (e) => {
-  return '';
+  if (e.location) {
+    return (`[${e.location.latitude}, ${e.location.longitude}]`
+      + `${e.location.place_desc ? ' - ' + e.location.place_desc : ''}`)
+  }
+  return 'n/a (or perhaps in description below)'
 }
 const insertResults = (results) => {
   // Clear any previous results
@@ -33,7 +37,7 @@ const insertResults = (results) => {
       + `Identifier = <b>${entry.id}</b>`;
     innerContainer.appendChild(header);
     let loc = create('div');
-    loc.textContent = `Location: ${getLocation(entry)}`;
+    loc.innerHTML = `<b>Location:</b> ${getLocation(entry)}`;
     innerContainer.appendChild(loc);
     let content = create('div');
     // Replace newlines with HTML linebreak tags
@@ -60,17 +64,23 @@ const insertResults = (results) => {
 const insertFailure = () => {
   results_area.textContent = 'URL not found in database';
 }
-const submitData = (event) => {
+
+const submitSingleURL = (event) => {
   event.preventDefault();
   const url = document.getElementById('url').value;
+  submitData(JSON.stringify({'url': url}), true);
+}
+const submitCSV = (event) => {
+  event.preventDefault();
   const formdata = new FormData();
-  if (!url) {
-    const csvfile = document.getElementById('file').files[0];
-    formdata.append('file', csvfile);
-  }
+  const csvfile = document.getElementById('file').files[0];
+  formdata.append('file', csvfile);
+  submitData(formdata, false);
+}
+const submitData = (payload, json) => {
   const requestOptions = {
-    method: 'POST', headers: url ? { 'Content-Type': 'application/json' } : {},
-    body: url ? JSON.stringify({'url': url}) : formdata,
+    method: 'POST', headers: json ? { 'Content-Type': 'application/json' } : {},
+    body: payload
   };
   fetch(API_QUERY, requestOptions)
     .then((resp) => resp.json())
@@ -83,4 +93,5 @@ const submitData = (event) => {
     })
     .catch((error) => console.log(error));
 }
-document.getElementById('query').onsubmit = submitData;
+document.getElementById('url-field').onsubmit = submitSingleURL;
+document.getElementById('file-field').onsubmit = submitCSV;

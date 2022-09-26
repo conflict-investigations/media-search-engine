@@ -19,15 +19,25 @@
 <em>Highly Work-in-Progress! Expect databases to be out of date.</em><br>
 <b>Do not rely on this yet!</b> Source available at <a href="https://github.com/conflict-investigations/media-search-engine">GitHub</a>
 </p>
- <form id='query' onSubmit='return submitData()'>
+
+<p>
+ <form id='url-field' onSubmit='return submitSingleURL()'>
   <label for='url'>Enter URL:</label><br>
   <input type='text' id='url' name='url'>
-  <br>
-  <label for='file'>Upload .csv file with links:</label><br>
-  <input type="file" id='file' name="file" accept=".csv">
-  <!-- <textarea></textarea> -->
   <input type='submit' value='Check'>
 </form>
+</p>
+
+<p>
+ <form id='file-field' onSubmit='return submitCSV()'>
+  <label for='file'>Upload .csv file with links:</label><br>
+  <input type="file" id='file' name="file" accept=".csv">
+  <input type='submit' value='Check'>
+</form>
+</p>
+
+<!-- TODO: <textarea></textarea> -->
+
 <div id="results"></div>
 
 {{ script_tag('index') }}
