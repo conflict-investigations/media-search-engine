@@ -67,13 +67,13 @@ const insertFailure = () => {
 
 const submitSingleURL = (event) => {
   event.preventDefault();
-  results_area.textContent = '';
+  results_area.textContent = 'loading...';
   const url = document.getElementById('url').value;
   submitData(JSON.stringify({'url': url}), true);
 }
 const submitCSV = (event) => {
   event.preventDefault();
-  results_area.textContent = '';
+  results_area.textContent = 'loading...';
   const formdata = new FormData();
   const csvfile = document.getElementById('file').files[0];
   formdata.append('file', csvfile);
