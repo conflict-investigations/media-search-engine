@@ -21,6 +21,8 @@ BELLINGCAT_FIELD_NAMES = [
 ]
 BELLINGCAT_FIELD_COUNT = len(BELLINGCAT_FIELD_NAMES)
 
+ENCODING = 'utf-8'  # Probably not always correct
+
 class FileProcessor(Processor):
     """
     A "dumb" processor that reads plaintext files and extracts URLs.
@@ -31,7 +33,7 @@ class FileProcessor(Processor):
 
     @staticmethod
     def read_file(fileobj):
-        return fileobj.read()
+        return fileobj.read().decode(ENCODING)
 
     @classmethod
     def get_data(cls):
@@ -46,7 +48,6 @@ class FileProcessor(Processor):
 class CSVFileProcessor(FileProcessor):
     @staticmethod
     def read_file(fileobj):
-        ENCODING = 'utf-8'  # Probably not always correct
         header = fileobj.readline().decode(ENCODING)
         if header.count(',') != BELLINGCAT_FIELD_COUNT - 1:
             raise BadFormatError
