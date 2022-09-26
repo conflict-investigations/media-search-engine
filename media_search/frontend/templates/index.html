@@ -14,42 +14,51 @@
 .intro { max-width: 800px; }
 .text { max-width: 600px; }
 .align-right { text-align: right; }
+#urls { width: 400px; }
+#url-field, #file-field { display: inline-block; width: 300px }
 </style>
 <body>
 <h1>OSINT Geolocation Databases Search</h1>
 {#- TODO: Better copy here -#}
 <div class="intro">
-<p class="text">
-Find out if a link from e.g. Twitter or Telegram has already been geolocated by OSINT researchers.
-Currently searches
-<a href="https://maphub.net/Cen4infoRes/russian-ukraine-monitor">Centre for Information Resilience</a>
-and <a href="https://ukraine.bellingcat.com/">Bellingcat's Ukraine</a> mapping projects.
-</p>
-<div class="align-right">
-Source and more info available at <a href="https://github.com/conflict-investigations/media-search-engine">GitHub</a>
-</div>
+  <p class="text">
+  Find out if a link from e.g. Twitter or Telegram has already been geolocated by OSINT researchers.
+  Currently searches
+  <a href="https://maphub.net/Cen4infoRes/russian-ukraine-monitor">Centre for Information Resilience</a>
+  and <a href="https://ukraine.bellingcat.com/">Bellingcat's Ukraine</a> mapping projects.
+  </p>
+  <div class="align-right">
+  Source and more info available at <a href="https://github.com/conflict-investigations/media-search-engine">GitHub</a>
+  </div>
 </div>
 
 <p>
- <form id='url-field' onSubmit='return submitSingleURL()'>
+<form id='url-field'>
   <label for='url'>Enter URL:</label><br>
   <input type='text' id='url' name='url'>
   <input type='submit' value='Check'>
 </form>
-</p>
 
-<p>
- <form id='file-field' onSubmit='return submitCSV()'>
+<form id='file-field'>
   <label for='file'>Upload .csv file with links:</label><br>
   <input type="file" id='file' name="file" accept=".csv">
   <input type='submit' value='Check'>
 </form>
 </p>
 
-<!-- TODO: <textarea></textarea> -->
+<p>
+<form id='textarea-field'>
+  <label for='urls'>Enter multiple URLs:</label><br>
+  <textarea id='urls'
+            placeholder='Links, separated by comma or empty spaces'
+  ></textarea>
+  <input type='submit' value='Check'>
+</form>
+</p>
 
 <div id="results"></div>
 
+{{ script_tag('autosize') }}
 {{ script_tag('index') }}
 </body>
 </html>

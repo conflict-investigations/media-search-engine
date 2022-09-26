@@ -69,7 +69,14 @@ const submitSingleURL = (event) => {
   event.preventDefault();
   results_area.textContent = 'loading...';
   const url = document.getElementById('url').value;
-  submitData(JSON.stringify({'url': url}), true);
+  submitData(JSON.stringify({'urls': [url,]}), true);
+}
+const submitMultipleURLs = (event) => {
+  event.preventDefault();
+  results_area.textContent = 'loading...';
+  const input = document.getElementById('urls').value;
+  const urls = input.split(/[ ,\\\n'"]+/);
+  submitData(JSON.stringify({'urls': urls}), true);
 }
 const submitCSV = (event) => {
   event.preventDefault();
@@ -99,4 +106,7 @@ const submitData = (payload, json) => {
     });
 }
 document.getElementById('url-field').onsubmit = submitSingleURL;
+document.getElementById('textarea-field').onsubmit = submitMultipleURLs;
 document.getElementById('file-field').onsubmit = submitCSV;
+
+autosize(document.querySelector('textarea'));
