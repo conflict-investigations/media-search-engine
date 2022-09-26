@@ -11,14 +11,24 @@
 #results { margin-top: 1em; }
 .result { border: 2px solid #d1e6e6; max-width: 600px;
           border-radius: 10px; padding: 5px 10px; }
+.intro { max-width: 800px; }
+.text { max-width: 600px; }
+.align-right { text-align: right; }
 </style>
 <body>
-<h1>Database search</h1>
+<h1>OSINT Geolocation Databases Search</h1>
 {#- TODO: Better copy here -#}
-<p>
-<em>Highly Work-in-Progress! Expect databases to be out of date.</em><br>
-<b>Do not rely on this yet!</b> Source available at <a href="https://github.com/conflict-investigations/media-search-engine">GitHub</a>
+<div class="intro">
+<p class="text">
+Find out if a link from e.g. Twitter or Telegram has already been geolocated by OSINT researchers.
+Currently searches
+<a href="https://maphub.net/Cen4infoRes/russian-ukraine-monitor">Centre for Information Resilience</a>
+and <a href="https://ukraine.bellingcat.com/">Bellingcat's Ukraine</a> mapping projects.
 </p>
+<div class="align-right">
+Source and more info available at <a href="https://github.com/conflict-investigations/media-search-engine">GitHub</a>
+</div>
+</div>
 
 <p>
  <form id='url-field' onSubmit='return submitSingleURL()'>

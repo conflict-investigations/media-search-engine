@@ -67,11 +67,13 @@ const insertFailure = () => {
 
 const submitSingleURL = (event) => {
   event.preventDefault();
+  results_area.textContent = '';
   const url = document.getElementById('url').value;
   submitData(JSON.stringify({'url': url}), true);
 }
 const submitCSV = (event) => {
   event.preventDefault();
+  results_area.textContent = '';
   const formdata = new FormData();
   const csvfile = document.getElementById('file').files[0];
   formdata.append('file', csvfile);
@@ -91,7 +93,10 @@ const submitData = (payload, json) => {
         insertFailure();
       }
     })
-    .catch((error) => console.log(error));
+    .catch((error) => {
+      console.log(error)
+      results_area.textContent = `Something went wrong. Technical information: ${error}`
+    });
 }
 document.getElementById('url-field').onsubmit = submitSingleURL;
 document.getElementById('file-field').onsubmit = submitCSV;
