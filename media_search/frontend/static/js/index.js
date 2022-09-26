@@ -10,7 +10,7 @@ const mapToSourceLink = (src) => {
       return `<a href=${BELLINGCAT_LINK}>Bellingcat</a>`
       break;
     case 'CEN4INFORES':
-      return `<a href=${CENINFORES_LINK}>Center for Information Resilience</a>`
+      return `<a href=${CENINFORES_LINK}>Centre for Information Resilience</a>`
       break;
     default:
       return src

@@ -10,7 +10,7 @@ USER_AGENT = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.36 
 
 class CenInfoResSource(DataSource):
     """
-    Center for Information Resilience
+    Centre for Information Resilience
     Data from https://maphub.net/Cen4infoRes/russian-ukraine-monitor
     """
 
