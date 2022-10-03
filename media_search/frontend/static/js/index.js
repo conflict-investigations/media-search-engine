@@ -17,10 +17,16 @@ const mapToSourceLink = (src) => {
       break;
   }
 }
+const formatOSM = (loc) => {
+  return `https://www.openstreetmap.org/?mlat=${loc.latitude}&mlon=${loc.longitude}#map=8/${loc.latitude}/${loc.longitude}`
+}
 const getLocation = (e) => {
   if (e.location) {
-    return (`[${e.location.latitude}, ${e.location.longitude}]`
-      + `${e.location.place_desc ? ' - ' + e.location.place_desc : ''}`)
+    return [
+      `<a href="${formatOSM(e.location)}">`,
+      `[${e.location.latitude}, ${e.location.longitude}]</a>`,
+      `${e.location.place_desc ? ' - ' + e.location.place_desc : ''}`,
+    ].join('');
   }
   return 'n/a (or perhaps in description below)'
 }
@@ -107,7 +113,6 @@ const submitData = (payload, json) => {
 }
 
 const exampleQuery = (event) => {
-  console.log(event)
   const urlElm = document.getElementById('url')
   const EXAMPLE_URL = 'https://twitter.com/RALee85/status/1497853526881546241';
   urlElm.value = EXAMPLE_URL;
