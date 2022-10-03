@@ -121,3 +121,5 @@ Copyright 2022 conflict-investigations Team.
 Licensed under [MIT License](https://mit-license.org/)
 
 [autosize](https://www.jacklmoore.com/autosize/) library by Jack Moore, MIT.
+
+Marker favicon by [Leaflet project](https://leafletjs.com/), Copyright (c) 2010-2022, Vladimir Agafonkin
