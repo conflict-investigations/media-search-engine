@@ -50,7 +50,7 @@ const insertResults = (results) => {
     let container = create('div');
     container.classList.add('result-container');
     let header = create('h3');
-    header.textContent = url;
+    header.innerHTML = `<a href="https://${url}">${url}</a>`;
     container.appendChild(header);
     entries.forEach((entry) => {
       container.appendChild(formatEntry(entry));
@@ -105,8 +105,22 @@ const submitData = (payload, json) => {
       results_area.textContent = `Something went wrong. Technical information: ${error}`
     });
 }
+
+const exampleQuery = (event) => {
+  console.log(event)
+  const urlElm = document.getElementById('url')
+  const EXAMPLE_URL = 'https://twitter.com/RALee85/status/1497853526881546241';
+  urlElm.value = EXAMPLE_URL;
+  submitSingleURL(event);
+  // Remove sample text
+  const elm = document.getElementById('example')
+  elm.parentElement.removeChild(elm);
+}
+
 document.getElementById('url-field').onsubmit = submitSingleURL;
 document.getElementById('textarea-field').onsubmit = submitMultipleURLs;
 document.getElementById('file-field').onsubmit = submitCSV;
+
+document.getElementById('example-query').addEventListener('click', exampleQuery, {once: true});
 
 autosize(document.querySelector('textarea'));

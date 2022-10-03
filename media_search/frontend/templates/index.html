@@ -34,6 +34,7 @@
 
 <p>
 <form id='url-field'>
+  <div id='example'> Example: <a href='#' onclick='(e) => e.preventDefault()' id='example-query'>twitter.com/RALee85/[...]</a></div>
   <label for='url'>Enter URL:</label><br>
   <input type='text' id='url' name='url'>
   <input type='submit' value='Check'>
@@ -58,6 +59,7 @@
 
 <div id="results"></div>
 
+{#- <script type="module" src="{{ url_for('.static', filename='vendor/leaflet/leaflet.js') }}"></script> -#}
 {{ script_tag('autosize') }}
 {{ script_tag('index') }}
 </body>

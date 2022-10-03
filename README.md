@@ -115,3 +115,9 @@ ARMS/MUNITION:
 VIOLENCE LEVEL: 1
 ENTRY: UW0067
 ```
+
+# LICENSE
+Copyright 2022 conflict-investigations Team.
+Licensed under [MIT License](https://mit-license.org/)
+
+[autosize](https://www.jacklmoore.com/autosize/) library by Jack Moore, MIT.

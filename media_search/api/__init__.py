@@ -43,7 +43,8 @@ def query():
             if not results.get(u):
                 results[u] = [p]
                 continue
-            results[u].append(p)
+            if p not in results[u]:
+                results[u].append(p)
     if not results:
         return jsonify(dict(
             message='Failure. Url not found in database',
