@@ -25,9 +25,9 @@ const getLocation = (e) => {
     return [
       `<a title="OpenStreetMaps link" href="${formatOSM(e.location)}">`,
       `[${e.location.latitude}, ${e.location.longitude}]</a>`,
-      `(<a href="#" title="Copy coordinates to clipboard" onClick="`
+      ` <button title="Copy coordinates to clipboard" onClick="`
       + `navigator.clipboard.writeText('${e.location.latitude}, ${e.location.longitude}')`,
-      `">copy</a>)`,
+      `">copy</button>`,
       `${e.location.place_desc ? ' - ' + e.location.place_desc : ''}`,
     ].join('');
   }
