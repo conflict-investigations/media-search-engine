@@ -23,8 +23,11 @@ const formatOSM = (loc) => {
 const getLocation = (e) => {
   if (e.location) {
     return [
-      `<a href="${formatOSM(e.location)}">`,
+      `<a title="OpenStreetMaps link" href="${formatOSM(e.location)}">`,
       `[${e.location.latitude}, ${e.location.longitude}]</a>`,
+      `(<a href="#" title="Copy coordinates to clipboard" onClick="`
+      + `navigator.clipboard.writeText('${e.location.latitude}, ${e.location.longitude}')`,
+      `">copy</a>)`,
       `${e.location.place_desc ? ' - ' + e.location.place_desc : ''}`,
     ].join('');
   }
