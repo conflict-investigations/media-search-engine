@@ -5,7 +5,11 @@ from urllib import request
 from typing import List
 
 from .base import DataSource
+from ..downloaders import DefmonDownloader
 
 # https://www.scribblemaps.com/maps/view/Operational%20Map%20Ukraine/nBT8ffpeGH
 # https://widgets.scribblemaps.com/api/maps/nBT8ffpeGH/smjsonLocal
-# 3.5mb
+# 22 MB
+
+class DefmonSource(DataSource):
+    pass
