@@ -7,6 +7,9 @@ import sys
 from .defaults import CONFIG
 from media_search import obtain
 
+# TODO: Use 'click' instead of argparse
+# (click is a dependency of flask anyway)
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('-p', '--print',
