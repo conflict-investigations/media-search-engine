@@ -1,6 +1,7 @@
 const API_QUERY = '/api/v1/query';
 const BELLINGCAT_LINK = 'https://ukraine.bellingcat.com/';
 const CENINFORES_LINK = 'https://maphub.net/Cen4infoRes/russian-ukraine-monitor'
+const GEOCONFIRMED_LINK = 'https://geoconfirmed.azurewebsites.net/'
 
 const results_area = document.getElementById('results');
 const create = ((elm) => document.createElement(elm));
@@ -11,6 +12,9 @@ const mapToSourceLink = (src) => {
       break;
     case 'CEN4INFORES':
       return `<a href=${CENINFORES_LINK}>Centre for Information Resilience</a>`
+      break;
+    case 'GEOCONFIRMED':
+      return `<a href=${GEOCONFIRMED_LINK}>@GeoConfirmed</a>`
       break;
     default:
       return src
