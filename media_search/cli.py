@@ -5,6 +5,7 @@ import pickle
 import sys
 
 from .defaults import CONFIG
+from .utils import normalize_and_sanitize
 from media_search import obtain
 
 # TODO: Use 'click' instead of argparse
@@ -72,8 +73,9 @@ def main():
         if not args.query:
             print("No URL supplied")
             sys.exit(1)
-        if args.query in processed:
-            results = processed[args.query]
+        query_sanitized = normalize_and_sanitize(args.query)
+        if query_sanitized in processed:
+            results = processed[query_sanitized]
             for res in results:
                 print(f"Found URL {args.query} in '{res['source']}' dataset")
                 print(f"Id: {res['id']}\nDescription:\n\n{res['desc']}")

@@ -14,7 +14,7 @@ DATA_FILES = dict(
   GEOCONFIRMED='geoconfirmed.json',
 )
 
-link_extract_regex = r"(https?://.+?)[ ,\n\\<>]"
+link_extract_regex = r"(https?://.+?)([ ,\n\\<>]|$)"
 entry_extract_regex = r"ENTRY: (\w+)[\n]?"
 geoconfirmed_regex = r"https://twitter\.com/GeoConfirmed/status/(\d+)([ ,\n]|$)"  # noqa
 
@@ -73,7 +73,7 @@ def process_ceninfores(data):
         matches = re.findall(link_extract_regex,
                              props['description'])
         if matches:
-            pairs = ((u, normalize_and_sanitize(u)) for u in matches)
+            pairs = ((u, normalize_and_sanitize(u)) for u, _unused in matches)
             found.extend(pairs)
         entryid = None
         if (candidate := re.findall(entry_extract_regex,
@@ -118,7 +118,8 @@ def process_geoconfirmed(data):
                 continue
             found = []
             if matches:
-                pairs = ((u, normalize_and_sanitize(u)) for u in matches)
+                pairs = ((u, normalize_and_sanitize(u))
+                    for u, _unused in matches)
                 found.extend(pairs)
 
             def get_id(desc):
