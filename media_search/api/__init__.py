@@ -2,11 +2,17 @@ import pickle
 from flask import (
     Blueprint,
     jsonify,
-    request
+    request,
+    send_file,
 )
 
 from ..defaults import CONFIG
-from ..processors import BadFormatError, CSVFileProcessor, FileProcessor
+from ..processors import (
+    BadFormatError,
+    CSVFileProcessor,
+    CSVFileExporter,
+    FileProcessor,
+)
 from ..utils import normalize_and_sanitize
 
 api = Blueprint('api', __name__, url_prefix='/api/v1')
@@ -50,9 +56,21 @@ def query():
             message='Failure. Url not found in database',
             success=False,
         ))
-    resp = dict(
+    # Return results as .csv file for importing into Excel
+    # https://stackoverflow.com/questions/35710361/python-flask-send-file-stringio-blank-files
+    as_csv = False
+    if (req_json := request.get_json(silent=True)):
+        as_csv = req_json.get('as_csv')
+    if as_csv:
+        mem = CSVFileExporter.convert_to_csv(results)
+        return send_file(
+            mem,
+            as_attachment=True,
+            download_name='results.csv',
+            mimetype='text/csv',
+        )
+    return jsonify(dict(
         message='Success! Url found in database',
         success=True,
         dataset=results
-    )
-    return jsonify(resp)
+    ))

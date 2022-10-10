@@ -1,4 +1,5 @@
 import csv
+import io
 import re
 
 from .base import BadFormatError, Processor
@@ -22,6 +23,10 @@ BELLINGCAT_FIELD_NAMES = [
 BELLINGCAT_FIELD_COUNT = len(BELLINGCAT_FIELD_NAMES)
 
 ENCODING = 'utf-8'  # Probably not always correct
+
+# Result fields returned by API
+RESULT_FIELDS = ['desc', 'id', 'latitude', 'longitude', 'place_desc', 'source',
+                 'unsanitized_url']
 
 class FileProcessor(Processor):
     """
@@ -90,3 +95,33 @@ class CSVFileProcessor(FileProcessor):
         data = self.get_data(self.fileobj)
         links = self.extract_links(data)
         return links
+
+class CSVFileExporter():
+    @staticmethod
+    def convert_to_csv(data):
+        proxy = io.StringIO()
+        writer = csv.writer(proxy)
+
+        def _format_item(url, val):
+            return [
+                url,
+                val['id'],
+                val['desc'].replace('\n', '\\n'),
+                val['location']['latitude'],
+                val['location']['longitude'],
+                val['location'].get('place_desc') or '',
+                val['source'],
+                val['unsanitized_url'],
+            ]
+
+        writer.writerow(RESULT_FIELDS)
+        for url in data.keys():
+            for val in data[url]:
+                writer.writerow(_format_item(url, val))
+
+        mem = io.BytesIO()
+        mem.write(proxy.getvalue().encode())
+        mem.seek(0)
+        proxy.close()
+
+        return mem
