@@ -86,7 +86,8 @@ def process_ceninfores(data):
         elif geometry['type'] == 'LineString':
             # Be lazy and use first vector of LineString
             coordinates = geometry.get('coordinates')[0]
-        loc = dict(latitude=coordinates[0], longitude=coordinates[1])
+        # Swap lat/lng since we're parsing GeoJSOn
+        loc = dict(latitude=coordinates[1], longitude=coordinates[0])
         for url, sanitized in found:
             processed[sanitized] = dict(
                 unsanitized_url=url,
