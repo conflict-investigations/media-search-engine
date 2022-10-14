@@ -1,6 +1,4 @@
-from flask import (
-    Flask,
-)
+from flask import Flask
 
 from .api import api
 from .frontend import frontend
