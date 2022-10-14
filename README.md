@@ -1,7 +1,7 @@
-# Media search engine
+# OSINT Geolocation Databases Search
 
-Check whether a (social) media post already exists in several databases (e.g.
-Belllingcat's, Cen4InfoRes).
+Check whether a (social) media post already exists and has been geolocated in
+several databases (e.g. Belllingcat's, Cen4InfoRes, GeoConfirmed).
 
 Has both a **simple web UI** as well as an **API** and a **command-line client**.
 
@@ -22,6 +22,8 @@ pip install -e .
 ```console
 # Before first run: Download necessary files
 media_search -o
+# Dump data into pre-formatted database so the web API can use it.
+media_search -d
 
 # Print all URLs in all databases
 media_search -p
@@ -29,9 +31,6 @@ media_search -p
 media_search -j
 # Seach for a specific URL
 media_search <url>
-
-# Dump data into pre-formatted database so the web API can use it.
-media_search -d
 # Load data from pre-formatted database on disk instead of loading the huge
 # database files themselves
 media_search -l
@@ -45,6 +44,9 @@ There's an "Export to JSON" button.
 The `Cen4InfoRes` database is from the Center for Information Resilience's
 [Eyes on Russia map](https://maphub.net/Cen4infoRes/russian-ukraine-monitor).
 
+The `GeoConfirmed` database is from the
+[GeoConfirmed map](https://geoconfirmed.azurewebsites.net/).
+
 The `media_search -o` command will download the data on your behalf and put it
 into a `data/` folder.
 
@@ -52,7 +54,7 @@ into a `data/` folder.
 There's a simple `flask` application with a plain HTML+JS frontend.
 
 The API part requires you to do a dump of the pre-formatted database beforehand.
-Run `media_search --dump` before you start the API server.
+Run `media_search -d` before you start the API server.
 
 Run the server:
 ```console
@@ -72,7 +74,8 @@ $ gunicorn -w 2 media_search.web:app'
 - `/`: Web UI
 - `/api/v1/export` - `GET` - Export all URLs as JSON
 - `/api/v1/query` - `GET`/`POST` - Check if URL is in a database  
-  **params**: `url`: The url to search (either as request args or as JSON body)  
+  **params**: `urls`: List of urls to search (as `POST` JSON body or
+  comma-separated `GET` argument)  
   **response:**
   ```json
   {
@@ -88,6 +91,19 @@ $ gunicorn -w 2 media_search.web:app'
   }
   ```
   If the entry as not found, `success` is `false`.
+
+**curl example:**  
+```
+# POST
+curl 'http://localhost:8000/api/v1/query' \
+    -X POST \
+    -H 'Content-Type: application/json' \
+    --data-raw '{"urls":["https://twitter.com/RALee85/status/1497853526881546241"]}'
+# GET
+curl 'http://localhost:8000/api/v1/query?\
+    urls=https://twitter.com/RALee85/status/1497853526881546241,\
+         https://twitter.com/GeoConfirmed/status/1508518239567065090'
+```
 
 **Web UI screenshot:**
 

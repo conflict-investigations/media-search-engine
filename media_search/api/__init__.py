@@ -28,8 +28,9 @@ def export():
 
 @api.route('/query', methods=['GET', 'POST'])
 def query():
-    urls = request.args.get('urls')
-    if not urls:
+    if (urls := request.args.get('urls')):
+        urls = urls.split(',')
+    else:
         # Be lenient and also parse JSON body
         if (req_json := request.get_json(silent=True)):
             urls = req_json.get('urls')
