@@ -12,6 +12,8 @@ DATA_FILES = dict(
   # DefMon3 dataset is 17Mb+, leave it for now to keep repo small
   # DEFMON='defmon-gsua.json',
   GEOCONFIRMED='geoconfirmed.json',
+  REUKRAINE='reukraine.json',  # XXX sorry this will eventually be public
+  # TEXTY='texty.json',
 )
 
 link_extract_regex = r"(https?://.+?)([ ,\n\\<>]|$)"
@@ -143,6 +145,33 @@ def process_geoconfirmed(data):
                 )
     return processed
 
+def process_reukraine(data):
+    processed = {}
+    for item in data['REUKRAINE']:
+        url = item.get('link')
+        sanitized = normalize_and_sanitize(url)
+        loc = dict(
+            latitude=item.get('latitude'),
+            longitude=item.get('longitude'),
+            place_desc=f"{item.get('address')} - {item.get('region')}",
+        )
+        date = ''
+        if (d := item.get('happend')):  # 'happend', not a typo
+            date = f'Date: {d}\n'
+        description = date
+        if (t := item.get('type')):
+            description = f"{description}{t}"
+        if (i := item.get('infotxt')):
+            description = f"{description} - {i}"
+        processed[sanitized] = dict(
+            unsanitized_url=url,
+            source='REUKRAINE',
+            id=f"reukraine-{item.get('id')}",
+            desc=description,
+            location=loc,
+        )
+    return processed
+
 def ensure_data_dir():
     if not os.path.isdir(CONFIG.DATA_FOLDER):
         os.mkdir(CONFIG.DATA_FOLDER)
@@ -155,6 +184,9 @@ def download_data():
     CenInfoResSource(datapath=CONFIG.DATA_FOLDER).get_data(download=True)
     print('  Downloading GeoConfirmed...')
     GeoconfirmedSource(datapath=CONFIG.DATA_FOLDER).get_data(download=True)
+    # TODO: reukraine and texty
+    # Since scraping reukraine is a bit tricky at the moment, upload a static
+    # 'magic' JSON file for now
     print('  Download finished')
 
 def load_and_generate_mapping():
@@ -168,6 +200,7 @@ def load_and_generate_mapping():
     bellingcat = process_bellingcat(data)
     ceninfores = process_ceninfores(data)
     geoconfirmed = process_geoconfirmed(data)
+    reukraine = process_reukraine(data)
 
     def add_src(src):
         for key in src.keys():
@@ -177,5 +210,6 @@ def load_and_generate_mapping():
     add_src(bellingcat)
     add_src(ceninfores)
     add_src(geoconfirmed)
+    add_src(reukraine)
 
     return processed

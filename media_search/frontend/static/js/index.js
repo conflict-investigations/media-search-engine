@@ -2,6 +2,7 @@ const API_QUERY = '/api/v1/query';
 const BELLINGCAT_LINK = 'https://ukraine.bellingcat.com/';
 const CENINFORES_LINK = 'https://maphub.net/Cen4infoRes/russian-ukraine-monitor'
 const GEOCONFIRMED_LINK = 'https://geoconfirmed.azurewebsites.net/'
+const REUKRAINE_LINK = 'https://reukraine.shtab.net/'
 
 const results_area = document.getElementById('results');
 const create = ((elm) => document.createElement(elm));
@@ -16,6 +17,9 @@ const mapToSourceLink = (src) => {
     case 'GEOCONFIRMED':
       return `<a href=${GEOCONFIRMED_LINK}>@GeoConfirmed</a>`
       break;
+    case 'REUKRAINE':
+      return `<a href=${REUKRAINE_LINK}>reukraine.shtab.net</a>`
+      break;
     default:
       return src
       break;
@@ -28,7 +32,7 @@ const getLocation = (e) => {
   if (e.location) {
     return [
       `<a title="OpenStreetMaps link" href="${formatOSM(e.location)}">`,
-      `[${e.location.latitude}, ${e.location.longitude}]</a>`,
+      `[${e.location.latitude.slice(0, 10)}, ${e.location.longitude.slice(0, 10)}]</a>`,
       ` <button title="Copy coordinates to clipboard" onClick="`
       + `navigator.clipboard.writeText('${e.location.latitude}, ${e.location.longitude}')`,
       `">copy</button>`,
