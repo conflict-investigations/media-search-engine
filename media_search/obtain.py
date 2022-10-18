@@ -89,7 +89,7 @@ def process_ceninfores(data):
             # Be lazy and use first vector of LineString
             coordinates = geometry.get('coordinates')[0]
         # Swap lat/lng since we're parsing GeoJSOn
-        loc = dict(latitude=coordinates[1], longitude=coordinates[0])
+        loc = dict(latitude=str(coordinates[1]), longitude=str(coordinates[0]))
         for url, sanitized in found:
             processed[sanitized] = dict(
                 unsanitized_url=url,
@@ -132,8 +132,8 @@ def process_geoconfirmed(data):
                 return '(no id)'
             loc = dict(
                 # Coordinates swapped?
-                latitude=item.get('coordinates')[1],
-                longitude=item.get('coordinates')[0],
+                latitude=str(item.get('coordinates')[1]),
+                longitude=str(item.get('coordinates')[0]),
             )
             for url, sanitized in found:
                 processed[sanitized] = dict(
