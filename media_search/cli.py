@@ -29,7 +29,7 @@ def main():
         action='store_true', dest='load',
         default=False,
         help="Load database from pre-processed dump file")
-    parser.add_argument('-o', '--obain',
+    parser.add_argument('-o', '--obtain',
         action='store_true', dest='obtain',
         default=False,
         help="Obtain (download) files from online sources")
@@ -78,7 +78,10 @@ def main():
             results = processed[query_sanitized]
             for res in results:
                 print(f"Found URL {args.query} in '{res['source']}' dataset")
-                print(f"Id: {res['id']}\nDescription:\n\n{res['desc']}")
+                print(f"Id: {res['id']}, "
+                      + f"Location: {res['location']['latitude']}, "
+                      + f"{res['location']['longitude']}"
+                      + f"\nDescription:\n\n{res['desc']}")
             sys.exit(0)
         else:
             print("URL not found in database")
