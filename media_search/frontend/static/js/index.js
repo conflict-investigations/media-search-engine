@@ -3,6 +3,7 @@ const BELLINGCAT_LINK = 'https://ukraine.bellingcat.com/';
 const CENINFORES_LINK = 'https://maphub.net/Cen4infoRes/russian-ukraine-monitor'
 const GEOCONFIRMED_LINK = 'https://geoconfirmed.azurewebsites.net/'
 const REUKRAINE_LINK = 'https://reukraine.shtab.net/'
+const TEXTY_LINK = 'https://texty.org.ua/projects/107577/under-attack-what-and-when-russia-shelled-ukraine/'
 
 const results_area = document.getElementById('results');
 const create = ((elm) => document.createElement(elm));
@@ -19,6 +20,9 @@ const mapToSourceLink = (src) => {
       break;
     case 'REUKRAINE':
       return `<a href=${REUKRAINE_LINK}>reukraine.shtab.net</a>`
+      break;
+    case 'TEXTY':
+      return `<a href=${TEXTY_LINK}>texty.org.ua</a>`
       break;
     default:
       return src
