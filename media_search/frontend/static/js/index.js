@@ -33,8 +33,9 @@ const getLocation = (e) => {
     return [
       `<a title="OpenStreetMaps link" href="${formatOSM(e.location)}">`,
       `[${e.location.latitude.slice(0, 10)}, ${e.location.longitude.slice(0, 10)}]</a>`,
-      ` <button title="Copy coordinates to clipboard" onClick="`
-      + `navigator.clipboard.writeText('${e.location.latitude}, ${e.location.longitude}')`,
+      ` <button id="copy-button-${e.id}" title="Copy coordinates to clipboard" onClick="`,
+      `navigator.clipboard.writeText('${e.location.latitude}, ${e.location.longitude}');`,
+      ` this.textContent = 'copied!';`,
       `">copy</button>`,
       `${e.location.place_desc ? ' - ' + e.location.place_desc : ''}`,
     ].join('');
