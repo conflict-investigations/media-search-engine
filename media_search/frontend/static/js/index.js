@@ -130,7 +130,7 @@ const submitData = (payload, json) => {
 
 const exampleQuery = (event) => {
   const urlElm = document.getElementById('url')
-  const EXAMPLE_URL = 'https://twitter.com/RALee85/status/1497853526881546241';
+  const EXAMPLE_URL = 'https://t.me/truexanewsua/57093';
   urlElm.value = EXAMPLE_URL;
   submitSingleURL(event);
   // Remove sample text
