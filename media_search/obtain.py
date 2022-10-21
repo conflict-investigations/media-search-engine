@@ -29,6 +29,9 @@ def build_mapping(events: Any) -> dict[str, dict]:
     url_to_data_mapping = {}  # type: dict[str, dict]
     for e in events:
         for link in e.links:
+            # Some sources contain non-url sources
+            if not link.startswith('http'):
+                continue
             sanitized = normalize_and_sanitize(link)
             if sanitized not in url_to_data_mapping:
                 url_to_data_mapping[sanitized] = []
@@ -69,8 +72,11 @@ def load_reukraine() -> Dict[str, Any]:
 
     processed = {}
     for item in data:
-        url = item.get('link')
-        sanitized = normalize_and_sanitize(url)
+        link = item.get('link')
+        # Some sources contain non-url sources
+        if not link.startswith('http'):
+            continue
+        sanitized = normalize_and_sanitize(link)
         loc = dict(
             latitude=item.get('latitude'),
             longitude=item.get('longitude'),
@@ -79,7 +85,7 @@ def load_reukraine() -> Dict[str, Any]:
         )
         date = ''
         if (d := item.get('happend')):  # 'happend', not a typo
-            date = f'Date: {d}\n'
+            date = f'Date: {d}'
         description = " - ".join(filter(None,
                                         (date,
                                          item.get('type'),
@@ -88,7 +94,7 @@ def load_reukraine() -> Dict[str, Any]:
             processed[sanitized] = []
 
         processed[sanitized].append(dict(
-            unsanitized_url=url,
+            unsanitized_url=link,
             source='REUKRAINE',
             id=f"reukraine-{item.get('id')}",
             desc=description,
