@@ -1,9 +1,21 @@
+from json import JSONEncoder
 from flask import Flask
 
 from .api import api
 from .frontend import frontend
 
 app = Flask(__name__, static_folder=None)
+
+# https://stackoverflow.com/a/32341402/2193463
+# Return cyrillic etc. as-is, not 'u\xxx'-encoded
+class NonASCIIJSONEncoder(JSONEncoder):
+    def __init__(self, **kwargs):
+        kwargs['ensure_ascii'] = False
+        kwargs['indent'] = None
+        super(NonASCIIJSONEncoder, self).__init__(**kwargs)
+
+
+app.json_encoder = NonASCIIJSONEncoder
 
 app.register_blueprint(api)
 app.register_blueprint(frontend)

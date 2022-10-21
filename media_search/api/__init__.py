@@ -59,6 +59,7 @@ def query():
         ))
     # Return results as .csv file for importing into Excel
     # https://stackoverflow.com/questions/35710361/python-flask-send-file-stringio-blank-files
+    # TODO and untested at the moment
     as_csv = False
     if (req_json := request.get_json(silent=True)):
         as_csv = req_json.get('as_csv')
