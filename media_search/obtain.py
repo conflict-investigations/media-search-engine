@@ -1,7 +1,6 @@
 import json
 import os
 from dataclasses import fields
-from pprint import pprint
 from typing import Any, Dict, List
 
 from geo_extractor.constants import RAW_DATA_FILENAMES, SOURCE_NAMES
@@ -114,7 +113,7 @@ def download_data() -> None:
         if sourcename == 'DEFMON':
             continue
         save_source(sourcename)
-    pprint('  Download finished')
+    print('  Download finished')
 
 def load_and_generate_mapping() -> dict[str, dict]:
     events = []

@@ -28,15 +28,10 @@ media_search -o
 # Dump data into pre-formatted database so the web API can use it.
 media_search -d
 
-# Print all URLs in all databases
-media_search -p
 # Print URLs as JSON
 media_search -j
 # Seach for a specific URL
 media_search <url>
-# Load data from pre-formatted database on disk instead of loading the huge
-# database files themselves
-media_search -l
 ```
 
 ### Obtaining data
