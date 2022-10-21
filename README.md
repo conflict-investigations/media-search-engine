@@ -47,10 +47,6 @@ There's an "Export to JSON" button.
 The `Cen4InfoRes` database is from the Center for Information Resilience's
 [Eyes on Russia map](https://maphub.net/Cen4infoRes/russian-ukraine-monitor).
 
-The `DefMon3` database is from Twitter user
-[@DefMon3](https://twitter.com/DefMon3) and downloaded from
-[scribblemaps.com](https://www.scribblemaps.com/maps/view/2022051301800/nBT8ffpeGH)
-
 The `GeoConfirmed` database is from the
 [GeoConfirmed map](https://geoconfirmed.azurewebsites.net/).
 

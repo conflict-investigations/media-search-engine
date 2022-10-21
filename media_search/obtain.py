@@ -104,6 +104,9 @@ def download_data() -> None:
     ensure_data_dir()
     for _field in fields(SOURCE_NAMES):
         sourcename = _field.name
+        # Skip DefMon3 shellings, see below
+        if sourcename == 'DEFMON':
+            continue
         save_source(sourcename)
     pprint('  Download finished')
 
@@ -111,6 +114,10 @@ def load_and_generate_mapping() -> dict[str, dict]:
     events = []
     for _field in fields(SOURCE_NAMES):
         sourcename = _field.name  # type: str
+        # We're not interested in DefMon3 shellings etc. since they mostly
+        # contain no useful links
+        if sourcename == 'DEFMON':
+            continue
         try:
             events.extend(load_source(sourcename))
         except FileNotFoundError:
