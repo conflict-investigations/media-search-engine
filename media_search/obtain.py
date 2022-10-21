@@ -1,215 +1,121 @@
 import json
 import os
-import re
+from dataclasses import fields
+from pprint import pprint
+from typing import Any, Dict, List
+
+from geo_extractor.constants import RAW_DATA_FILENAMES, SOURCE_NAMES
+from geo_extractor import DOWNLOADERS, EXTRACTORS
 
 from .defaults import CONFIG
-from .accessors import BellingcatSource, CenInfoResSource, GeoconfirmedSource
 from .utils import normalize_and_sanitize
 
-DATA_FILES = dict(
-  BELLINGCAT='bellingcat.json',
-  CEN4INFORES='cen4infores.json',
-  # DefMon3 dataset is 17Mb+, leave it for now to keep repo small
-  # DEFMON='defmon-gsua.json',
-  GEOCONFIRMED='geoconfirmed.json',
-  REUKRAINE='reukraine.json',  # XXX sorry this will eventually be public
-  # TEXTY='texty.json',
-)
+def get_file(sourcename: str) -> os.PathLike:
+    return os.path.join(CONFIG.DATA_FOLDER,
+                        RAW_DATA_FILENAMES.__dict__[sourcename])
 
-link_extract_regex = r"(https?://.+?)([ ,\n\\<>]|$)"
-entry_extract_regex = r"ENTRY: (\w+)[\n]?"
-geoconfirmed_regex = r"https://twitter\.com/GeoConfirmed/status/(\d+)([ ,\n]|$)"  # noqa
+def load_source(sourcename: str) -> List[Any]:
+    with open(get_file(sourcename), 'r') as f:
+        data = json.loads(f.read())
+    return EXTRACTORS[sourcename]().extract_events(data)
 
-def get_file(sourcename):
-    return os.path.join(CONFIG.DATA_FOLDER, DATA_FILES[sourcename])
+def save_source(sourcename: str) -> None:
+    print(f"    Downloading {sourcename}...")
+    data = DOWNLOADERS[sourcename]().download()
+    with open(get_file(sourcename), 'w') as f:
+        json.dump(data, f, ensure_ascii=False)
 
-def load_files():
-    data = {}
-    for key in DATA_FILES.keys():
-        with open(get_file(key), 'r') as f:
-            data[key] = json.loads(f.read())
-    return data
+def build_mapping(events: Any) -> dict[str, dict]:
+    url_to_data_mapping = {}  # type: dict[str, dict]
+    for e in events:
+        for link in e.links:
+            sanitized = normalize_and_sanitize(link)
+            if sanitized not in url_to_data_mapping:
+                url_to_data_mapping[sanitized] = []
 
-def process_bellingcat(data):
-    processed = {}
-    for item in data['BELLINGCAT']:
-        for source in item.get('sources'):
-            if not source.get('path'):
-                continue  # Skip items without links
-            url = source['path']
             loc = dict(
-                latitude=item.get('latitude'),
-                longitude=item.get('longitude'),
-                place_desc=item.get('location')
+                latitude=str(e.latitude),
+                longitude=str(e.longitude),
+                place_desc=e.place_desc,
             )
-            date = ''
-            if (d := item.get('date')):
-                date = f'Date: {d}\n'
-            processed[normalize_and_sanitize(url)] = dict(
-                unsanitized_url=url,
-                source='BELLINGCAT',
-                id=item.get('id'),
-                desc=date + item.get('description'),
+            date = e.date.strftime('%Y-%m-%d') if e.date else None
+            url_to_data_mapping[sanitized].append(dict(
+                unsanitized_url=link,
+                source=e.source,
+                id=e.id,
+                desc=' - '.join(filter(None, (date, e.description))),
                 location=loc,
-            )
-    return processed
+            ))
 
-def process_ceninfores(data):
-    processed = {}
-    for item in data['CEN4INFORES']['geojson']['features']:
-        props = item.get('properties')
-        if not props:
-            continue
-        found = []
-        # Not every 'type: Feature' has a 'media_url' property
-        if (url := props.get('media_url')):
-            found.append((url, normalize_and_sanitize(url)))
+    # TODO: Special case for reukraine data
+    # If "magic" JSON file is not present the source will not be used
+    try:
+        reukraine = load_reukraine()
+        for key in reukraine.keys():
+            if key not in url_to_data_mapping:
+                url_to_data_mapping[key] = []
+            url_to_data_mapping[key].extend(reukraine[key])
+    except FileNotFoundError:
+        pass
 
-        # We may get the same URL multiple times for a single item (e.g. once
-        # as `GEOLOCATION` and once as `LINK`). But that's not too worrisome
-        # since we link the whole item anyway
-        if not props.get('description'):
-            props['description'] = ''
-        if props.get('title'):
-            props['description'] = props['title'] + '\n' + props['description']
-        matches = re.findall(link_extract_regex,
-                             props['description'])
-        if matches:
-            pairs = ((u, normalize_and_sanitize(u)) for u, _unused in matches)
-            found.extend(pairs)
-        entryid = None
-        if (candidate := re.findall(entry_extract_regex,
-                                    props['description'])):
-            entryid = candidate[0]
-        geometry = item.get('geometry')
-        coordinates = [None, None]
-        if geometry['type'] == 'Point':
-            coordinates = geometry.get('coordinates')
-        elif geometry['type'] == 'LineString':
-            # Be lazy and use first vector of LineString
-            coordinates = geometry.get('coordinates')[0]
-        # Swap lat/lng since we're parsing GeoJSOn
-        loc = dict(latitude=str(coordinates[1]), longitude=str(coordinates[0]))
-        for url, sanitized in found:
-            processed[sanitized] = dict(
-                unsanitized_url=url,
-                source='CEN4INFORES',
-                id=entryid,
-                desc=props.get('description'),
-                location=loc,
-            )
-    return processed
+    return url_to_data_mapping
 
-def process_geoconfirmed(data):
-    def is_relevant(folder):
-        # Filter out metadata folders
-        _name = folder.get('name')
-        if _name.startswith('A.') or _name.startswith('B.'):
-            return False
-        return True
+# TODO: Handle this in geo_extractor
+def load_reukraine() -> Dict[str, Any]:
+    REUKRAINE_FILENAME = 'reukraine-full.json'
+    filename = os.path.join(CONFIG.DATA_FOLDER, REUKRAINE_FILENAME)
+    with open(filename, 'r') as f:
+        data = json.loads(f.read())
 
     processed = {}
-    folders = filter(is_relevant, data['GEOCONFIRMED'].get('mapDataFolders'))
-    for folder in folders:
-        placemarks = folder.get('mapDataPlacemarks')
-        if not placemarks:
-            continue
-        for item in placemarks:
-            matches = re.findall(link_extract_regex,
-                                 item.get('description'))
-            if not matches:
-                continue
-            found = []
-            if matches:
-                pairs = ((u, normalize_and_sanitize(u))
-                    for u, _unused in matches)
-                found.extend(pairs)
-
-            def get_id(desc):
-                status = re.findall(geoconfirmed_regex, desc)
-                if status:
-                    return status[0][0]
-                return '(no id)'
-            loc = dict(
-                # Coordinates swapped?
-                latitude=str(item.get('coordinates')[1]),
-                longitude=str(item.get('coordinates')[0]),
-            )
-            for url, sanitized in found:
-                processed[sanitized] = dict(
-                    unsanitized_url=url,
-                    source='GEOCONFIRMED',
-                    id=get_id(item.get('description')),
-                    desc=item.get('description'),
-                    location=loc,
-                )
-    return processed
-
-def process_reukraine(data):
-    processed = {}
-    for item in data['REUKRAINE']:
+    for item in data:
         url = item.get('link')
         sanitized = normalize_and_sanitize(url)
         loc = dict(
             latitude=item.get('latitude'),
             longitude=item.get('longitude'),
-            place_desc=f"{item.get('address')} - {item.get('region')}",
+            place_desc=" - ".join(filter(None, (item.get('address'),
+                                                item.get('region')))),
         )
         date = ''
         if (d := item.get('happend')):  # 'happend', not a typo
             date = f'Date: {d}\n'
-        description = date
-        if (t := item.get('type')):
-            description = f"{description}{t}"
-        if (i := item.get('infotxt')):
-            description = f"{description} - {i}"
-        processed[sanitized] = dict(
+        description = " - ".join(filter(None,
+                                        (date,
+                                         item.get('type'),
+                                         item.get('infotxt'))))
+        if sanitized not in processed:
+            processed[sanitized] = []
+
+        processed[sanitized].append(dict(
             unsanitized_url=url,
             source='REUKRAINE',
             id=f"reukraine-{item.get('id')}",
             desc=description,
             location=loc,
-        )
+        ))
     return processed
 
-def ensure_data_dir():
+def ensure_data_dir() -> None:
     if not os.path.isdir(CONFIG.DATA_FOLDER):
         os.mkdir(CONFIG.DATA_FOLDER)
 
-def download_data():
+def download_data() -> None:
     ensure_data_dir()
-    print('  Downloading Bellingcat...')
-    BellingcatSource(datapath=CONFIG.DATA_FOLDER).get_data(download=True)
-    print('  Downloading Cen4infoRes...')
-    CenInfoResSource(datapath=CONFIG.DATA_FOLDER).get_data(download=True)
-    print('  Downloading GeoConfirmed...')
-    GeoconfirmedSource(datapath=CONFIG.DATA_FOLDER).get_data(download=True)
-    # TODO: reukraine and texty
-    # Since scraping reukraine is a bit tricky at the moment, upload a static
-    # 'magic' JSON file for now
-    print('  Download finished')
+    for _field in fields(SOURCE_NAMES):
+        sourcename = _field.name
+        save_source(sourcename)
+    pprint('  Download finished')
 
-def load_and_generate_mapping():
-    try:
-        data = load_files()
-    except FileNotFoundError:
-        print('Files not yet downloaded, downloading')
-        download_data()
-        data = load_files()
-    processed = {}
-    bellingcat = process_bellingcat(data)
-    ceninfores = process_ceninfores(data)
-    geoconfirmed = process_geoconfirmed(data)
-    reukraine = process_reukraine(data)
-
-    def add_src(src):
-        for key in src.keys():
-            if not processed.get(key):
-                processed[key] = []
-            processed[key].append(src[key])
-    add_src(bellingcat)
-    add_src(ceninfores)
-    add_src(geoconfirmed)
-    add_src(reukraine)
-
+def load_and_generate_mapping() -> dict[str, dict]:
+    events = []
+    for _field in fields(SOURCE_NAMES):
+        sourcename = _field.name  # type: str
+        try:
+            events.extend(load_source(sourcename))
+        except FileNotFoundError:
+            print(f"{sourcename} file missing")
+            save_source(sourcename)
+            events.extend(load_source(sourcename))
+    processed = build_mapping(events)
     return processed

@@ -1,6 +1,10 @@
 from setuptools import setup, find_packages
 
-requires = ['flask']
+requires = [
+    'click',
+    'flask',
+    'osint-geo-extractor',
+]
 
 setup(
     name='media_search',

@@ -1,2 +1,0 @@
-class Downloader():
-    pass
