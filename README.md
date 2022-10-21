@@ -9,6 +9,9 @@ Has both a **simple web UI** as well as an **API** and a **command-line client**
 
 Requires Python, `pip` and the `flask` package (the CLI can be used without
 `flask`).
+For data extraction, the
+[osint-geo-extractor](https://pypi.org/project/osint-geo-extractor/) library is
+used.
 
 ```console
 virtualenv .venv
@@ -44,8 +47,19 @@ There's an "Export to JSON" button.
 The `Cen4InfoRes` database is from the Center for Information Resilience's
 [Eyes on Russia map](https://maphub.net/Cen4infoRes/russian-ukraine-monitor).
 
+The `DefMon3` database is from Twitter user
+[@DefMon3](https://twitter.com/DefMon3) and downloaded from
+[scribblemaps.com](https://www.scribblemaps.com/maps/view/2022051301800/nBT8ffpeGH)
+
 The `GeoConfirmed` database is from the
 [GeoConfirmed map](https://geoconfirmed.azurewebsites.net/).
+
+The `Reukraine` database is from [reukraine.shtab.net](https://reukraine.shtab.net).
+*Note: Beta status, currently not publicly available.*
+
+The `Texty` database is from
+[Texty.org.ua](https://texty.org.ua/projects/107577/under-attack-what-and-when-russia-shelled-ukraine/).
+with kind permission from the authors.
 
 The `media_search -o` command will download the data on your behalf and put it
 into a `data/` folder.
@@ -81,9 +95,19 @@ $ gunicorn -w 2 media_search.web:app'
   {
     "dataset": [
       {
-        "desc": "ENTRY: UW[...]", 
+        "desc": "ENTRY: UW1234 Looting at XYZ[...]",
         "id": "UW13293", 
-        "source": "CEN4INFORES"
+        "location": {
+          "latitude": "44.0",
+          "longitude": "50.1",
+          "place_desc": "Sumy"
+        },
+        "source": "CEN4INFORES",
+        "unsanitized_url": "https://t.me/foo/bar?utm_source=baz"
+      },
+      {
+        "desc": ...
+        "id": ...
       }
     ], 
     "message": "Success! Url found in database", 
