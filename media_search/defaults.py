@@ -3,8 +3,8 @@ from dataclasses import dataclass
 
 @dataclass
 class Config():
-    DATA_FOLDER: os.PathLike
-    DUMP_FOLDER: os.PathLike
+    DATA_FOLDER: str
+    DUMP_FOLDER: str
     DUMP_FILE: str
 
 

@@ -9,7 +9,7 @@ from geo_extractor import DOWNLOADERS, EXTRACTORS
 from .defaults import CONFIG
 from .utils import normalize_and_sanitize
 
-def get_file(sourcename: str) -> os.PathLike:
+def get_file(sourcename: str) -> str:
     return os.path.join(CONFIG.DATA_FOLDER,
                         RAW_DATA_FILENAMES.__dict__[sourcename])
 
@@ -24,8 +24,8 @@ def save_source(sourcename: str) -> None:
     with open(get_file(sourcename), 'w') as f:
         json.dump(data, f, ensure_ascii=False)
 
-def build_mapping(events: Any) -> dict[str, dict]:
-    url_to_data_mapping = {}  # type: dict[str, dict]
+def build_mapping(events: Any) -> dict[str, List[dict]]:
+    url_to_data_mapping = {}  # type: dict[str, List[dict]]
     for e in events:
         for link in e.links:
             # Some sources contain non-url sources
@@ -69,7 +69,7 @@ def load_reukraine() -> Dict[str, Any]:
     with open(filename, 'r') as f:
         data = json.loads(f.read())
 
-    processed = {}
+    processed = {}  # type: dict[str, List[dict[str, Any]]]
     for item in data:
         link = item.get('link')
         # Some sources contain non-url sources
@@ -115,7 +115,7 @@ def download_data() -> None:
         save_source(sourcename)
     print('  Download finished')
 
-def load_and_generate_mapping() -> dict[str, dict]:
+def load_and_generate_mapping() -> dict[str, List[dict[str, Any]]]:
     events = []
     for _field in fields(SOURCE_NAMES):
         sourcename = _field.name  # type: str
@@ -129,5 +129,5 @@ def load_and_generate_mapping() -> dict[str, dict]:
             print(f"{sourcename} file missing")
             save_source(sourcename)
             events.extend(load_source(sourcename))
-    processed = build_mapping(events)
+    processed = build_mapping(events)  # type: dict[str, List[dict[str, Any]]]
     return processed
