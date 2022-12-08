@@ -40,7 +40,7 @@ const getLocation = (e) => {
       ` <button id="copy-button-${e.id}" title="Copy coordinates to clipboard" onClick="`,
       `navigator.clipboard.writeText('${e.location.latitude}, ${e.location.longitude}');`,
       ` this.textContent = 'copied!';`,
-      `">copy</button>`,
+      `">copy coordinates</button>`,
       `${e.location.place_desc ? ' - ' + e.location.place_desc : ''}`,
     ].join('');
   }
