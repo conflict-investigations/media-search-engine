@@ -40,7 +40,7 @@ The `Belllingcat` database is from their
 There's an "Export to JSON" button.
 
 The `Cen4InfoRes` database is from the Center for Information Resilience's
-[Eyes on Russia map](https://maphub.net/Cen4infoRes/russian-ukraine-monitor).
+[Eyes on Russia map](https://eyesonrussia.org/).
 
 The `GeoConfirmed` database is from the
 [GeoConfirmed map](https://geoconfirmed.azurewebsites.net/).

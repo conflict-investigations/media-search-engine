@@ -1,6 +1,6 @@
 const API_QUERY = '/api/v1/query';
 const BELLINGCAT_LINK = 'https://ukraine.bellingcat.com/';
-const CENINFORES_LINK = 'https://maphub.net/Cen4infoRes/russian-ukraine-monitor'
+const CENINFORES_LINK = 'https://eyesonrussia.org/'
 const GEOCONFIRMED_LINK = 'https://geoconfirmed.azurewebsites.net/'
 const REUKRAINE_LINK = 'https://reukraine.shtab.net/'
 const TEXTY_LINK = 'https://texty.org.ua/projects/107577/under-attack-what-and-when-russia-shelled-ukraine/'
