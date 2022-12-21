@@ -110,7 +110,7 @@ def download_data() -> None:
     for _field in fields(SOURCE_NAMES):
         sourcename = _field.name
         # Skip DefMon3 shellings, see below
-        if sourcename == 'DEFMON':
+        if sourcename == SOURCE_NAMES.DEFMON:
             continue
         save_source(sourcename)
     print('  Download finished')
