@@ -1,14 +1,27 @@
-from json import JSONEncoder
+import json
+import logging
+import os
 from flask import Flask
 
 from .api import api
+from .defaults import CONFIG
 from .frontend import frontend
 
 app = Flask(__name__, static_folder=None)
 
+# First, import defaults
+app.config.update(**(CONFIG.__dict__))
+
+# Then, try reading user-supplied config
+try:
+    conf_path = os.path.join(os.getcwd(), CONFIG.CONFIG_FILE)
+    app.config.from_file(conf_path, load=json.load)
+except FileNotFoundError:
+    pass
+
 # https://stackoverflow.com/a/32341402/2193463
 # Return cyrillic etc. as-is, not 'u\xxx'-encoded
-class NonASCIIJSONEncoder(JSONEncoder):
+class NonASCIIJSONEncoder(json.JSONEncoder):
     def __init__(self, **kwargs):
         kwargs['ensure_ascii'] = False
         kwargs['indent'] = None
