@@ -30,6 +30,10 @@ class NonASCIIJSONEncoder(json.JSONEncoder):
 
 app.json_encoder = NonASCIIJSONEncoder
 
+gunicorn_logger = logging.getLogger('gunicorn.error')
+app.logger.handlers = gunicorn_logger.handlers
+app.logger.setLevel(gunicorn_logger.level)
+
 app.register_blueprint(api)
 app.register_blueprint(frontend)
 

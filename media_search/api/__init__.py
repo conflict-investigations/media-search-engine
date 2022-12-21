@@ -44,6 +44,10 @@ def query():
             urls = CSVFileProcessor(file).get_links()
         except BadFormatError:
             urls = FileProcessor(file).get_links()
+
+    if current_app.config['LOGGING']:
+        current_app.logger.warning("query: {urls}".format(urls=str(urls)))
+
     urls = list(map(normalize_and_sanitize, urls))
     results = {}
     for u in filter(lambda x: x in processed, urls):
