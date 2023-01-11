@@ -77,45 +77,44 @@ $ gunicorn -w 2 media_search.web:app'
 **Available routes**
 
 - `/`: Web UI
-- `/api/v1/export` - `GET` - Export all URLs as JSON
-- `/api/v1/query` - `GET`/`POST` - Check if URL is in a database  
+- `/api/v1.1/export` - `GET` - Export all URLs as JSON
+- `/api/v1.1/query` - `GET`/`POST` - Check if URL is in a database  
   **params**: `urls`: List of urls to search (as `POST` JSON body or
   comma-separated `GET` argument)  
   **response:**
   ```json
   {
-    "dataset": [
-      {
-        "desc": "ENTRY: UW1234 Looting at XYZ[...]",
-        "id": "UW13293", 
-        "location": {
-          "latitude": "44.0",
-          "longitude": "50.1",
-          "place_desc": "Sumy"
-        },
-        "source": "CEN4INFORES",
-        "unsanitized_url": "https://t.me/foo/bar?utm_source=baz"
-      },
-      {
-        "desc": ...
-        "id": ...
-      }
-    ], 
-    "message": "Success! Url found in database", 
+    "dataset": {
+      "t.me/truexanewsua/57093": [
+        {
+          "desc": "2022-08-15 - A naval mine exploded...",
+          "id": "UW11823",
+          "location": {
+            "latitude": "46.0552",
+            "longitude": "30.443433",
+            "place_desc": "Ukraine - Odessa Oblast - Zatoka"
+          },
+          "source": "CENINFORES",
+          "unsanitized_url": "https://t.me/truexanewsua/57093"
+        }
+      ]
+    },
+    "message": "Success! Url found in database",
     "success": true
   }
   ```
   If the entry as not found, `success` is `false`.
+- `/api/v1.1/query/csv` - `POST` - Check all links in uploaded `.csv` file
 
 **curl example:**  
 ```
 # POST
-curl 'http://localhost:8000/api/v1/query' \
+curl 'http://localhost:8000/api/v1.1/query' \
     -X POST \
     -H 'Content-Type: application/json' \
     --data-raw '{"urls":["https://twitter.com/RALee85/status/1497853526881546241"]}'
 # GET
-curl 'http://localhost:8000/api/v1/query?\
+curl 'http://localhost:8000/api/v1.1/query?\
     urls=https://twitter.com/RALee85/status/1497853526881546241,\
          https://twitter.com/GeoConfirmed/status/1508518239567065090'
 ```
