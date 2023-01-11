@@ -16,7 +16,7 @@ setup(
     url='https://github.com/conflict-research/media-search-engine',
     license='MIT',
     description='Search engine for URLs in OSINT databases',
-    python_requires='>=3.8',
+    python_requires='>=3.9',
     install_requires=requires,
     entry_points={
         'console_scripts':
