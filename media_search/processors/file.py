@@ -25,8 +25,8 @@ BELLINGCAT_FIELD_COUNT = len(BELLINGCAT_FIELD_NAMES)
 ENCODING = 'utf-8'  # Probably not always correct
 
 # Result fields returned by API
-RESULT_FIELDS = ['desc', 'id', 'latitude', 'longitude', 'place_desc', 'source',
-                 'unsanitized_url']
+RESULT_FIELDS = ['url', 'id', 'desc', 'latitude', 'longitude', 'place_desc',
+                 'source', 'unsanitized_url']
 
 class FileProcessor(Processor):
     """
@@ -98,7 +98,7 @@ class CSVFileProcessor(FileProcessor):
 
 class CSVFileExporter():
     @staticmethod
-    def convert_to_csv(data):
+    def convert_to_csv(data) -> io.BytesIO:
         proxy = io.StringIO()
         writer = csv.writer(proxy)
 
