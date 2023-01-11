@@ -1,4 +1,5 @@
-const API_QUERY = '/api/v1/query';
+const API_QUERY = '/api/v1.1/query';
+const API_CSV = '/api/v1.1/query/csv';
 const BELLINGCAT_LINK = 'https://ukraine.bellingcat.com/';
 const CENINFORES_LINK = 'https://eyesonrussia.org/'
 const GEOCONFIRMED_LINK = 'https://geoconfirmed.azurewebsites.net/'
@@ -87,45 +88,77 @@ const insertFailure = () => {
   results_area.textContent = 'URL not found in database';
 }
 
+// Adapted from:
+// https://github.com/bellingcat/ukraine-timemap/blob/ad1ccc4fd3cf6f53c6fc36eb0a57ab04524b37da/src/common/utilities.js#L564-L578
+const downloadAsFile = (filename, content) => {
+  let elm = document.createElement('a');
+  elm.setAttribute(
+    'href',
+    `data:application/octet-stream;charset=utf-8,${encodeURIComponent(content)}`
+  );
+  elm.setAttribute('download', filename);
+  elm.style.display = "none";
+  document.body.appendChild(elm);
+  elm.click();
+  document.body.removeChild(elm);
+}
+
 const submitSingleURL = (event) => {
   event.preventDefault();
   results_area.textContent = 'loading...';
+  const resultFormat = document.querySelector('input[name=result_format]:checked').value;
   const url = document.getElementById('url').value;
-  submitData(JSON.stringify({'urls': [url,]}), true);
+  submitData(API_QUERY, JSON.stringify({'urls': [url,], 'format': resultFormat}), true, resultFormat);
 }
 const submitMultipleURLs = (event) => {
   event.preventDefault();
   results_area.textContent = 'loading...';
+  const resultFormat = document.querySelector('input[name=result_format]:checked').value;
   const input = document.getElementById('urls').value;
   const urls = input.split(/[ ,\\\n'"]+/);
-  submitData(JSON.stringify({'urls': urls}), true);
+  submitData(API_QUERY, JSON.stringify({'urls': urls, 'format': resultFormat}), true, resultFormat);
 }
 const submitCSV = (event) => {
   event.preventDefault();
   results_area.textContent = 'loading...';
+  const resultFormat = document.querySelector('input[name=result_format]:checked').value;
   const formdata = new FormData();
   const csvfile = document.getElementById('file').files[0];
   formdata.append('file', csvfile);
-  submitData(formdata, false);
+  formdata.append('format', resultFormat);
+  submitData(API_CSV, formdata, false, resultFormat);
 }
-const submitData = (payload, json) => {
+const submitData = (url, payload, json, resultFormat) => {
   const requestOptions = {
     method: 'POST', headers: json ? { 'Content-Type': 'application/json' } : {},
     body: payload
   };
-  fetch(API_QUERY, requestOptions)
-    .then((resp) => resp.json())
-    .then((response) => {
-      if (response.success) {
-        insertResults(response.dataset);
-      } else {
-        insertFailure();
-      }
-    })
-    .catch((error) => {
-      console.log(error)
-      results_area.textContent = `Something went wrong. Technical information: ${error}`
-    });
+  if (['json', 'csv'].includes(resultFormat)) {
+    fetch(url, requestOptions)
+      .then((resp) => resp.text())
+      .then((response) => {
+        results_area.textContent = '';
+        downloadAsFile(`results.${resultFormat}`, response);
+      })
+      .catch((error) => {
+        console.log(error)
+        results_area.textContent = `Something went wrong. Technical information: ${error}`
+      });
+  } else {
+    fetch(url, requestOptions)
+      .then((resp) => resp.json())
+      .then((response) => {
+        if (response.success) {
+          insertResults(response.dataset);
+        } else {
+          insertFailure();
+        }
+      })
+      .catch((error) => {
+        console.log(error)
+        results_area.textContent = `Something went wrong. Technical information: ${error}`
+      });
+  }
 }
 
 const exampleQuery = (event) => {

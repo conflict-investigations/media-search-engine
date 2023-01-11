@@ -71,6 +71,17 @@ ul { margin-top: 0; }
 </form>
 </p>
 
+<p>
+Receive results as:
+<input type="radio" id="text" name="result_format" value="text"
+       checked>
+<label for="text">Text (in Web UI)</label>
+<input type="radio" id="json" name="result_format" value="json">
+<label for="json">JSON</label>
+<input type="radio" id="csv" name="result_format" value="csv">
+<label for="csv">CSV</label>
+</p>
+
 <div id="results"></div>
 
 </div><!-- end .wrapper -->
