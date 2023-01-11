@@ -79,8 +79,12 @@ $ gunicorn -w 2 media_search.web:app'
 - `/`: Web UI
 - `/api/v1.1/export` - `GET` - Export all URLs as JSON
 - `/api/v1.1/query` - `GET`/`POST` - Check if URL is in a database  
-  **params**: `urls`: List of urls to search (as `POST` JSON body or
-  comma-separated `GET` argument)  
+  **params**:
+  - `urls`: List of urls to search (as `POST` JSON body array of strings or
+    comma-separated `GET` argument)
+  - `format`: `text`, `json` or `csv` - Show results in web UI (`text`) or force
+    downloading as `results.json` or `results.csv` file
+
   **response:**
   ```json
   {
@@ -97,14 +101,17 @@ $ gunicorn -w 2 media_search.web:app'
           "source": "CENINFORES",
           "unsanitized_url": "https://t.me/truexanewsua/57093"
         }
-      ]
+      ],
+      "twitter.com/foo/bar": ["..."],
+      "baz/bar": ["..."],
     },
     "message": "Success! Url found in database",
     "success": true
   }
   ```
   If the entry as not found, `success` is `false`.
-- `/api/v1.1/query/csv` - `POST` - Check all links in uploaded `.csv` file
+- `/api/v1.1/query/csv` - `POST` - Check all links in uploaded `.csv` file  
+  **params:** File as `POST` form data named `file`
 
 **curl example:**  
 ```
