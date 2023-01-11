@@ -37,6 +37,10 @@ app.logger.setLevel(gunicorn_logger.level)
 app.register_blueprint(api)
 app.register_blueprint(frontend)
 
+@app.route('/api/v1')
+def outdated():
+    return 'API v1 is outdated, please update', 400
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=8000)

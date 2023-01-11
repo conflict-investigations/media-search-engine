@@ -19,7 +19,7 @@ from ..processors import (
 )
 from ..utils import normalize_and_sanitize
 
-api = Blueprint('api', __name__, url_prefix='/api/v1')
+api = Blueprint('api', __name__, url_prefix='/api/v1.1')
 
 processed: dict[str, Any] = {}
 with open(CONFIG.DUMP_FILE, 'rb') as f:
