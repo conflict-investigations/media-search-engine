@@ -18,11 +18,16 @@ def load_source(sourcename: str) -> List[Any]:
         data = json.loads(f.read())
     return EXTRACTORS[sourcename]().extract_events(data)
 
-def save_source(sourcename: str) -> None:
+def save_source(sourcename: str) -> bool:
     print(f"    Downloading {sourcename}...")
-    data = DOWNLOADERS[sourcename]().download()
+    try:
+        data = DOWNLOADERS[sourcename]().download()
+    except Exception as e:
+        print("    Error while downloading: %s" % str(e))
+        return False
     with open(get_file(sourcename), 'w') as f:
         json.dump(data, f, ensure_ascii=False)
+    return True
 
 def build_mapping(events: List[Any]) -> dict[str, List[dict]]:
     url_to_data_mapping = {}  # type: dict[str, List[dict]]
