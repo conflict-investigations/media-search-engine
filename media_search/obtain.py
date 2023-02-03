@@ -112,9 +112,6 @@ def download_data() -> None:
         # Skip DefMon3 shellings, see below
         if sourcename == SOURCE_NAMES.DEFMON:
             continue
-        # XXX TEMP disable GeoConfirmed as it's down
-        if sourcename == SOURCE_NAMES.GEOCONFIRMED:
-            continue
         save_source(sourcename)
     print('  Download finished')
 
