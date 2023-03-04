@@ -36,7 +36,7 @@ const linkToIdentifier = (src, id) => {
       return `<a href="${BELLINGCAT_LINK}/?id=${id}">${id}</a>`
       break;
     case 'CENINFORES':
-      return `<a href="${CENINFORES_LINK}">${id}</a>`
+      return `${id}`
       break;
     case 'GEOCONFIRMED':
       return `<a href="${GEOCONFIRMED_LINK}/${id}">${id}</a>`
