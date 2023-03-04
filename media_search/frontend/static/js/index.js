@@ -2,7 +2,7 @@ const API_QUERY = '/api/v1.1/query';
 const API_CSV = '/api/v1.1/query/csv';
 const BELLINGCAT_LINK = 'https://ukraine.bellingcat.com/';
 const CENINFORES_LINK = 'https://eyesonrussia.org/'
-const GEOCONFIRMED_LINK = 'https://geoconfirmed.azurewebsites.net/'
+const GEOCONFIRMED_LINK = 'https://geoconfirmed.org/ukraine'
 const REUKRAINE_LINK = 'https://reukraine.shtab.net/'
 const TEXTY_LINK = 'https://texty.org.ua/projects/107577/under-attack-what-and-when-russia-shelled-ukraine/'
 

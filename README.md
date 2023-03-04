@@ -43,7 +43,7 @@ The `Cen4InfoRes` database is from the Center for Information Resilience's
 [Eyes on Russia map](https://eyesonrussia.org/).
 
 The `GeoConfirmed` database is from the
-[GeoConfirmed map](https://geoconfirmed.azurewebsites.net/).
+[GeoConfirmed map](https://geoconfirmed.org/ukraine).
 
 The `Reukraine` database is from [reukraine.shtab.net](https://reukraine.shtab.net).
 *Note: Beta status, currently not publicly available.*
