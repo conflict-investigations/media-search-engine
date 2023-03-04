@@ -11,22 +11,44 @@ const create = ((elm) => document.createElement(elm));
 const mapToSourceLink = (src) => {
   switch (src) {
     case 'BELLINGCAT':
-      return `<a href=${BELLINGCAT_LINK}>Bellingcat</a>`
+      return `<a href="${BELLINGCAT_LINK}">Bellingcat</a>`
       break;
-    case 'CEN4INFORES':
-      return `<a href=${CENINFORES_LINK}>Centre for Information Resilience</a>`
+    case 'CENINFORES':
+      return `<a href="${CENINFORES_LINK}">Centre for Information Resilience</a>`
       break;
     case 'GEOCONFIRMED':
-      return `<a href=${GEOCONFIRMED_LINK}>@GeoConfirmed</a>`
+      return `<a href="${GEOCONFIRMED_LINK}">@GeoConfirmed</a>`
       break;
     case 'REUKRAINE':
-      return `<a href=${REUKRAINE_LINK}>reukraine.shtab.net</a>`
+      return `<a href="${REUKRAINE_LINK}">reukraine.shtab.net</a>`
       break;
     case 'TEXTY':
-      return `<a href=${TEXTY_LINK}>texty.org.ua</a>`
+      return `<a href="${TEXTY_LINK}">texty.org.ua</a>`
       break;
     default:
       return src
+      break;
+  }
+}
+const linkToIdentifier = (src, id) => {
+  switch (src) {
+    case 'BELLINGCAT':
+      return `<a href="${BELLINGCAT_LINK}/?id=${id}">${id}</a>`
+      break;
+    case 'CENINFORES':
+      return `<a href="${CENINFORES_LINK}">${id}</a>`
+      break;
+    case 'GEOCONFIRMED':
+      return `<a href="${GEOCONFIRMED_LINK}/${id}">${id}</a>`
+      break;
+    case 'REUKRAINE':
+      return `${id}`
+      break;
+    case 'TEXTY':
+      return `(no id)`
+      break;
+    default:
+      return id
       break;
   }
 }
@@ -57,7 +79,7 @@ const insertResults = (results) => {
     let header = create('span');
     header.innerHTML =
       `Found entry in database of <b>${mapToSourceLink(entry.source)}</b>, `
-      + `Identifier = <b>${entry.id}</b>`;
+      + `Identifier = <b>${linkToIdentifier(entry.source, entry.id)}</b>`;
     innerContainer.appendChild(header);
     let loc = create('div');
     loc.innerHTML = `<b>Location:</b> ${getLocation(entry)}`;
