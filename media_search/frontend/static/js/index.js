@@ -42,7 +42,7 @@ const linkToIdentifier = (src, id) => {
       return `<a href="${GEOCONFIRMED_LINK}/${id}">${id}</a>`
       break;
     case 'REUKRAINE':
-      return `${id}`
+      return `<a href="${REUKRAINE_LINK}detail/${id.replace('reukraine-', '')}">${id}</a>`
       break;
     case 'TEXTY':
       return `(no id)`
