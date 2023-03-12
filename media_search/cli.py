@@ -31,16 +31,20 @@ def main(json_, dump_, obtain_, query) -> None:
     if obtain_:
         obtain.download_data()
         processed = obtain.load_and_generate_mapping()
+        ensure_dump_dir()
+        dump(processed)
+        sys.exit(0)
+    if dump_:
+        processed = obtain.load_and_generate_mapping()
+        ensure_dump_dir()
         dump(processed)
         sys.exit(0)
     try:
         with open(CONFIG.DUMP_FILE, 'rb') as f:
             processed = pickle.load(f)
     except FileNotFoundError:
+        ensure_dump_dir()
         processed = obtain.load_and_generate_mapping()
-    if dump_:
-        dump(processed)
-        sys.exit(0)
 
     if json_:
         click.echo(json.dumps(processed, ensure_ascii=False))
