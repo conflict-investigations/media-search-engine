@@ -48,10 +48,7 @@ def reply_csv(results):
         mimetype='text/csv',
     )
 
-def handle_query(urls: list[str], resultformat: str):
-    if current_app.config['LOGGING']:
-        current_app.logger.warning("query: {urls}".format(urls=str(urls)))
-
+def handle_query(urls: list[str], resultformat: str, req: Any):
     if not urls:
         return jsonify(dict(
             message='Failure. No URLs supplied',
@@ -67,6 +64,16 @@ def handle_query(urls: list[str], resultformat: str):
                 continue
             if p not in results[u]:
                 results[u].append(p)
+
+    if current_app.config['LOGGING']:
+        offset = len(url_prefix)
+        current_app.logger.warning(
+            "{url} format: {fmt}, results: {num_res}, query: {urls}".format( # noqa
+                url=req.path[offset:], fmt=resultformat,
+                num_res=len(results), urls=str(urls),
+            )
+        )
+
     if not results:
         return jsonify(dict(
             message='Failure. Url not found in database',
@@ -108,7 +115,7 @@ def query_csv():
 
     resultformat: str = request.form.get('format', 'text')
 
-    return handle_query(urls, resultformat)
+    return handle_query(urls, resultformat, request)
 
 @api.route('/query', methods=['GET', 'POST'])
 def query():
@@ -124,4 +131,4 @@ def query():
             urls = req_json.get('urls')
             resultformat = req_json.get('format', 'text')
 
-    return handle_query(urls, resultformat)
+    return handle_query(urls, resultformat, request)
