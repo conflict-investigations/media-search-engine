@@ -33,7 +33,7 @@ def build_mapping(events: List[Any]) -> dict[str, List[dict]]:
     url_to_data_mapping = {}  # type: dict[str, List[dict]]
     for e in events:
         for link in e.links:
-            # Some sources contain non-url sources
+            # Some sources contain non-url sources, e.g. from texty.org.ua
             if not link.startswith('http'):
                 continue
             sanitized = normalize_and_sanitize(link)
@@ -126,7 +126,7 @@ def load_and_generate_mapping() -> dict[str, List[dict[str, Any]]]:
         sourcename: str = _field.name
         # We're not interested in DefMon3 shellings etc. since they mostly
         # contain no useful links
-        if sourcename == 'DEFMON':
+        if sourcename == SOURCE_NAMES.DEFMON:
             continue
         try:
             events.extend(load_source(sourcename))
