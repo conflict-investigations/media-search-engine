@@ -3,6 +3,8 @@
 Check whether a (social) media post already exists and has been geolocated in
 several databases (e.g. Belllingcat's, Cen4InfoRes, GeoConfirmed).
 
+*Now with visualization on a map via [leaflet.js](https://leafletjs.com/)*
+
 Has both a **simple web UI** as well as an **API** and a **command-line client**.
 
 ### Installation
