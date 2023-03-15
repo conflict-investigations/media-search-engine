@@ -154,9 +154,14 @@ ENTRY: UW0067
 ```
 
 # LICENSE
-Copyright 2022 conflict-investigations Team.
+Copyright 2022-2023 conflict-investigations Team.
 Licensed under [MIT License](https://mit-license.org/)
 
 [autosize](https://www.jacklmoore.com/autosize/) library by Jack Moore, MIT.
+
+[leaflet](https://leafletjs.com/) for maps, licensed 2-clause BSD:
+
+> Copyright (c) 2010-2023, Volodymyr Agafonkin  
+> Copyright (c) 2010-2011, CloudMade
 
 Marker favicon by [Leaflet project](https://leafletjs.com/), Copyright (c) 2010-2022, Vladimir Agafonkin
