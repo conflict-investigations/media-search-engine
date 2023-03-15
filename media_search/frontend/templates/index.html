@@ -8,6 +8,7 @@
   <title>OSINT Geolocation Databases Search</title>
   {#- Icon from leaflet - https://leafletjs.com/ Copyright (c) 2010-2022, Vladimir Agafonkin #}
   <link rel="shortcut icon" type="image/png" href="{{ url_for('.static', filename='marker-icon.png') }}">
+  <link rel="stylesheet" href="{{ url_for('.static', filename='css/leaflet.css') }}" type="text/css" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <style>
@@ -21,6 +22,10 @@ ul { margin-top: 0; }
 .align-right { text-align: right; }
 #urls { width: 400px; }
 #url-field, #file-field { display: inline-block; width: 300px }
+
+/* Leaflet */
+#map-button { padding: 1em 2em; }
+#leaflet-map { width: 100%; height: 400px; }
 </style>
 <body>
 <div class="wrapper">
@@ -86,8 +91,8 @@ Receive results as:
 
 </div><!-- end .wrapper -->
 
-{#- <script type="module" src="{{ url_for('.static', filename='vendor/leaflet/leaflet.js') }}"></script> -#}
 {{ script_tag('autosize') }}
 {{ script_tag('index') }}
+{{ script_tag('leaflet') }}
 </body>
 </html>
