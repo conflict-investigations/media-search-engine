@@ -6,8 +6,11 @@ const GEOCONFIRMED_LINK = 'https://geoconfirmed.org/ukraine'
 const REUKRAINE_LINK = 'https://reukraine.shtab.net/'
 const TEXTY_LINK = 'https://texty.org.ua/projects/107577/under-attack-what-and-when-russia-shelled-ukraine/'
 
-const results_area = document.getElementById('results');
+const UKRAINE_CENTER = [48.1928465, 37.8562077];
+
+const resultsArea = document.getElementById('results');
 const create = ((elm) => document.createElement(elm));
+const insertFirst = ((parent, elm) => parent.insertBefore(elm, parent.children[0]));
 const mapToSourceLink = (src) => {
   switch (src) {
     case 'BELLINGCAT':
@@ -69,9 +72,64 @@ const getLocation = (e) => {
   }
   return 'n/a (or perhaps in description below)'
 }
+
+const visualizeMap = (results) => {
+  let map = L.map('leaflet-map').setView(UKRAINE_CENTER, 5);
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+  console.log(results);
+  for (let url in results) {
+    let entries = results[url];
+    console.log('results');
+    console.log(results);
+    for (let key in entries) {
+      let entry = entries[key];
+      console.log('entry');
+      console.log(entry);
+      let lat = entry.location.latitude;
+      let lng = entry.location.longitude;
+      let marker = L.marker([lat, lng]).addTo(map);
+      let popup = (
+        `<b>DB: ${mapToSourceLink(entry.source)}</b>, ` +
+        `ID: ${linkToIdentifier(entry.source, entry.id)} - ` +
+        `${url}<br>` +
+        `<b>Location:</b> ${getLocation(entry)}` +
+        `${entry.location.place_desc ? ' - ' + entry.location.place_desc : ''}<br>` +
+        `${entry.desc}`
+      )
+      marker.bindPopup(popup);
+    }
+  }
+}
+
 const insertResults = (results) => {
   // Clear any previous results
-  results_area.textContent = '';
+  resultsArea.textContent = '';
+
+  const mapButton = () => {
+    let _mapButton = create('button');
+    _mapButton.id = 'map-button';
+    _mapButton.textContent = 'Visualize results on map';
+    _mapButton.addEventListener('click',
+      (event) => {
+        console.log('click');
+        insertFirst(resultsArea, mapArea());
+        visualizeMap(results);
+        document.getElementById('map-button').remove();
+      },
+      false,
+      // Remove button
+    )
+    return _mapButton;
+  }
+
+  const mapArea = () => {
+    let mapDiv = create('div');
+    mapDiv.id = 'leaflet-map';
+    return mapDiv;
+  }
 
   const formatEntry = (entry) => {
     let innerContainer = create('div');
@@ -100,14 +158,17 @@ const insertResults = (results) => {
     entries.forEach((entry) => {
       container.appendChild(formatEntry(entry));
     });
-    results_area.appendChild(container);
+    resultsArea.appendChild(container);
   };
+
+  resultsArea.appendChild(mapButton());
+
   Object.entries(results).forEach(([url, entries]) => {
     insertContainer(url, entries);
   });
 }
 const insertFailure = () => {
-  results_area.textContent = 'URL not found in database';
+  resultsArea.textContent = 'URL not found in database';
 }
 
 // Adapted from:
@@ -127,14 +188,14 @@ const downloadAsFile = (filename, content) => {
 
 const submitSingleURL = (event) => {
   event.preventDefault();
-  results_area.textContent = 'loading...';
+  resultsArea.textContent = 'loading...';
   const resultFormat = document.querySelector('input[name=result_format]:checked').value;
   const url = document.getElementById('url').value;
   submitData(API_QUERY, JSON.stringify({'urls': [url,], 'format': resultFormat}), true, resultFormat);
 }
 const submitMultipleURLs = (event) => {
   event.preventDefault();
-  results_area.textContent = 'loading...';
+  resultsArea.textContent = 'loading...';
   const resultFormat = document.querySelector('input[name=result_format]:checked').value;
   const input = document.getElementById('urls').value;
   const urls = input.split(/[ ,\\\n'"]+/);
@@ -142,7 +203,7 @@ const submitMultipleURLs = (event) => {
 }
 const submitCSV = (event) => {
   event.preventDefault();
-  results_area.textContent = 'loading...';
+  resultsArea.textContent = 'loading...';
   const resultFormat = document.querySelector('input[name=result_format]:checked').value;
   const formdata = new FormData();
   const csvfile = document.getElementById('file').files[0];
@@ -159,12 +220,12 @@ const submitData = (url, payload, json, resultFormat) => {
     fetch(url, requestOptions)
       .then((resp) => resp.text())
       .then((response) => {
-        results_area.textContent = '';
+        resultsArea.textContent = '';
         downloadAsFile(`results.${resultFormat}`, response);
       })
       .catch((error) => {
         console.log(error)
-        results_area.textContent = `Something went wrong. Technical information: ${error}`
+        resultsArea.textContent = `Something went wrong. Technical information: ${error}`
       });
   } else {
     fetch(url, requestOptions)
@@ -178,7 +239,7 @@ const submitData = (url, payload, json, resultFormat) => {
       })
       .catch((error) => {
         console.log(error)
-        results_area.textContent = `Something went wrong. Technical information: ${error}`
+        resultsArea.textContent = `Something went wrong. Technical information: ${error}`
       });
   }
 }
