@@ -6,7 +6,8 @@ const GEOCONFIRMED_LINK = 'https://geoconfirmed.org/ukraine'
 const REUKRAINE_LINK = 'https://reukraine.shtab.net/'
 const TEXTY_LINK = 'https://texty.org.ua/projects/107577/under-attack-what-and-when-russia-shelled-ukraine/'
 
-const UKRAINE_CENTER = [48.1928465, 37.8562077];
+const UKRAINE_CENTER = [48.356, 33.662];
+const ZOOM_LEVEL = 5;
 
 const resultsArea = document.getElementById('results');
 const create = ((elm) => document.createElement(elm));
@@ -74,7 +75,7 @@ const getLocation = (e) => {
 }
 
 const visualizeMap = (results) => {
-  let map = L.map('leaflet-map').setView(UKRAINE_CENTER, 5);
+  let map = L.map('leaflet-map').setView(UKRAINE_CENTER, ZOOM_LEVEL);
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
