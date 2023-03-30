@@ -3,6 +3,12 @@
 Check whether a (social) media post already exists and has been geolocated in
 several databases (e.g. Belllingcat's, Cen4InfoRes, GeoConfirmed).
 
+---
+
+Use it **live:** [Geolocation Databases Search](https://t.co/jnGTOLEuaG)
+
+---
+
 *Now with visualization on a map via [leaflet.js](https://leafletjs.com/)*
 
 Has both a **simple web UI** as well as an **API** and a **command-line client**.
@@ -154,6 +160,18 @@ ARMS/MUNITION:
 VIOLENCE LEVEL: 1
 ENTRY: UW0067
 ```
+
+# Prior Art
+
+See also
+[atlos.org](https://atlos.notion.site/Platform-Overview-46d4723f22ef420fb5ad0e07feba8d79),
+which tries to do something quite similar, but it seems it's mostly used for
+closed investigations.
+
+The Centre for Information Resilience has also recently intensified efforts to
+integrate other sources into their [map](https://eyesonrussia.org/), so the
+utility of this tool, which was always intended to be transitional, is shrinking
+further.
 
 # LICENSE
 Copyright 2022-2023 conflict-investigations Team.
