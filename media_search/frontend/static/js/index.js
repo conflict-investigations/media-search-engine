@@ -80,18 +80,20 @@ const visualizeMap = (results) => {
     maxZoom: 19,
     attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
   }).addTo(map);
-  console.log(results);
+  //console.log(results);
+  // Collect all markers into a group in order to compute outer bounds
+  var grp = new L.FeatureGroup();
   for (let url in results) {
     let entries = results[url];
-    console.log('results');
-    console.log(results);
     for (let key in entries) {
       let entry = entries[key];
-      console.log('entry');
-      console.log(entry);
+      //console.log('entry');
+      //console.log(entry);
       let lat = entry.location.latitude;
       let lng = entry.location.longitude;
-      let marker = L.marker([lat, lng]).addTo(map);
+      //let marker = L.marker([lat, lng]).addTo(map);
+      let marker = L.marker([lat, lng]);
+      grp.addLayer(marker);
       let popup = (
         `<b>DB: ${mapToSourceLink(entry.source)}</b>, ` +
         `ID: ${linkToIdentifier(entry.source, entry.id)} - ` +
@@ -103,6 +105,11 @@ const visualizeMap = (results) => {
       marker.bindPopup(popup);
     }
   }
+  grp.addTo(map);
+  // Center and zoom the map on added markers
+  map.fitBounds(grp.getBounds());
+  // Zoom level should be at most the initial zoom level, i. e., not zoom in on objects too much
+  map.setZoom(Math.min(map.getBoundsZoom(grp.getBounds()), ZOOM_LEVEL));
 }
 
 const insertResults = (results) => {
@@ -115,7 +122,6 @@ const insertResults = (results) => {
     _mapButton.textContent = 'Visualize results on map';
     _mapButton.addEventListener('click',
       (event) => {
-        console.log('click');
         insertFirst(resultsArea, mapArea());
         visualizeMap(results);
         document.getElementById('map-button').remove();
