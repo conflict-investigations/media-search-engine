@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 requires = [
     'click',
     'flask',
-    'osint-geo-extractor>=0.0.11',
+    'osint-geo-extractor>=0.0.12',
 ]
 
 setup(
