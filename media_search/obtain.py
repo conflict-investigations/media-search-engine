@@ -128,6 +128,9 @@ def load_and_generate_mapping() -> dict[str, List[dict[str, Any]]]:
         # contain no useful links
         if sourcename == SOURCE_NAMES.DEFMON:
             continue
+        # TODO: Revertme once Geoconfirmed is working again
+        if sourcename == SOURCE_NAMES.GEOCONFIRMED:
+            continue
         try:
             events.extend(load_source(sourcename))
         except FileNotFoundError:
