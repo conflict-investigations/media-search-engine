@@ -52,6 +52,7 @@ The `Cen4InfoRes` database is from the Center for Information Resilience's
 
 The `GeoConfirmed` database is from the
 [GeoConfirmed map](https://geoconfirmed.org/ukraine).
+*Note: Currently not working due to data format change*
 
 The `Reukraine` database is from [reukraine.shtab.net](https://reukraine.shtab.net).
 *Note: Beta status, currently not publicly available.*
