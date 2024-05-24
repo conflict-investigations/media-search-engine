@@ -13,7 +13,7 @@ from flask import (
 from ..defaults import CONFIG
 from ..processors import (
     BadFormatError,
-    CSVFileProcessor,
+    BellingcatCSVFileProcessor,
     CSVFileExporter,
     FileProcessor,
 )
@@ -48,12 +48,15 @@ def reply_csv(results):
         mimetype='text/csv',
     )
 
+def handle_error(message: str, resultformat: str, req: Any):
+    return jsonify(dict(
+        message=message,
+        success=False,
+    ))
+
 def handle_query(urls: list[str], resultformat: str, req: Any):
     if not urls:
-        return jsonify(dict(
-            message='Failure. No URLs supplied',
-            success=False,
-        ))
+        return handle_error('Failure. No URLs supplied', resultformat, req)
 
     urls = list(map(normalize_and_sanitize, urls))
     results = {}
@@ -67,9 +70,10 @@ def handle_query(urls: list[str], resultformat: str, req: Any):
 
     if current_app.config['LOGGING']:
         offset = len(url_prefix)
+        ip = req.environ.get('HTTP_X_FORWARDED_FOR', req.remote_addr)
         current_app.logger.warning(
-            "{url} format: {fmt}, results: {num_res}, query: {urls}".format( # noqa
-                url=req.path[offset:], fmt=resultformat,
+            "{url} ip: {ip}, format: {fmt}, results: {num_res}, query: {urls}".format( # noqa
+                url=req.path[offset:], ip=ip, fmt=resultformat,
                 num_res=len(results), urls=str(urls),
             )
         )
@@ -109,7 +113,13 @@ def query_csv():
         return 'No query supplied', 400
 
     try:
-        urls: list[str] = CSVFileProcessor(file).get_links()
+        urls: list[str] = BellingcatCSVFileProcessor(file).get_links()
+    except UnicodeDecodeError as e:
+        return handle_error(
+                'Failure. Uploaded .csv file has bad format: %s' % e,
+                None,
+                None,
+        )
     except BadFormatError:
         urls: list[str] = FileProcessor(file).get_links()
 

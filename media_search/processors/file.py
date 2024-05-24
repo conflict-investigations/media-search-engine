@@ -50,7 +50,11 @@ class FileProcessor(Processor):
         return matches
 
 
-class CSVFileProcessor(FileProcessor):
+class BellingcatCSVFileProcessor(FileProcessor):
+    """
+    A processor tailored to exports of the Bellingcat volunteer Google
+    spreadsheet
+    """
     @staticmethod
     def read_file(fileobj):
         header = fileobj.readline().decode(ENCODING)
