@@ -174,8 +174,8 @@ const insertResults = (results) => {
     insertContainer(url, entries);
   });
 }
-const insertFailure = () => {
-  resultsArea.textContent = 'URL not found in database';
+const insertFailure = (message) => {
+  resultsArea.textContent = message;
 }
 
 // Adapted from:
@@ -241,7 +241,7 @@ const submitData = (url, payload, json, resultFormat) => {
         if (response.success) {
           insertResults(response.dataset);
         } else {
-          insertFailure();
+          insertFailure(response.message);
         }
       })
       .catch((error) => {
