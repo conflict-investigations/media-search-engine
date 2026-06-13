@@ -5,10 +5,6 @@ several databases (e.g. Belllingcat's, Cen4InfoRes, GeoConfirmed).
 
 ---
 
-Use it **live:** [Geolocation Databases Search](https://t.co/jnGTOLEuaG)
-
----
-
 *Now with visualization on a map via [leaflet.js](https://leafletjs.com/)*
 
 Has both a **simple web UI** as well as an **API** and a **command-line client**.
